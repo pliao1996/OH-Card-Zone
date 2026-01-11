@@ -31,11 +31,13 @@ export function CardDisplay({
     <div 
       className={cn("relative perspective-1000 cursor-pointer group", sizeClasses[size], className)}
       onClick={onClick}
+      data-testid={`card-${card.id}`}
     >
       <motion.div
         className="w-full h-full relative transform-style-3d transition-all duration-700"
         animate={{ rotateY: isRevealed ? 0 : 180 }}
         whileHover={{ scale: 1.05, y: -5 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
       >
         {/* FRONT SIDE (Content) */}
         <div className={cn(
@@ -107,11 +109,13 @@ export function PairDisplay({
     <div 
       className="relative w-72 h-96 cursor-pointer perspective-1000 group"
       onClick={onClick}
+      data-testid={`pair-${imageCard.id}-${wordCard.id}`}
     >
        <motion.div
         className="w-full h-full relative transform-style-3d transition-all duration-700"
         animate={{ rotateY: isRevealed ? 0 : 180 }}
         whileHover={{ scale: 1.02 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
       >
         {/* FRONT */}
         <div className="absolute inset-0 backface-hidden w-full h-full shadow-2xl rounded-xl overflow-hidden bg-white border border-border">

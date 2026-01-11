@@ -15,22 +15,28 @@ function SpreadSelection({ onSelect }: { onSelect: (mode: 'image' | 'word' | 'pa
     { 
       id: 'image', 
       title: '单张图卡', 
-      desc: '抽取一张图卡，激发情感或记忆。',
-      bg: 'bg-orange-50 hover:bg-orange-100 border-orange-100'
+      desc: '抽取一张图卡，激发直觉、想象力与潜在的情感。',
+      bg: 'bg-orange-50/50 hover:bg-orange-100/50 border-orange-100 shadow-sm hover:shadow-md'
     },
     { 
       id: 'word', 
       title: '单张字卡', 
-      desc: '抽取一张字卡，提供主题或背景。',
-      bg: 'bg-blue-50 hover:bg-blue-100 border-blue-100'
+      desc: '抽取一张字卡，提供一个思考的主题、概念或背景。',
+      bg: 'bg-blue-50/50 hover:bg-blue-100/50 border-blue-100 shadow-sm hover:shadow-md'
     },
     { 
       id: 'pair', 
-      title: 'OH 组合', 
-      desc: '结合图像和文字，获得深度洞察。',
-      bg: 'bg-purple-50 hover:bg-purple-100 border-purple-100',
+      title: 'OH 经典组合', 
+      desc: '将图卡放入字卡框中，通过两者的交互获得深度洞察。',
+      bg: 'bg-purple-50/50 hover:bg-purple-100/50 border-purple-100 shadow-md hover:shadow-lg ring-1 ring-purple-200',
       featured: true
     },
+    {
+      id: 'past-present-future',
+      title: '时间轴牌阵',
+      desc: '抽取三张卡片，分别代表过去、现在和未来。',
+      bg: 'bg-teal-50/50 hover:bg-teal-100/50 border-teal-100 shadow-sm hover:shadow-md'
+    }
   ];
 
   return (
@@ -74,25 +80,37 @@ function ActiveSpread({
   onBack, 
   onDrawAgain 
 }: { 
-  mode: 'image' | 'word' | 'pair'; 
+  mode: string; 
   onBack: () => void;
-  onDrawAgain: () => void; // Triggered to reset state
+  onDrawAgain: () => void; 
 }) {
   const { mutate: draw, data, isPending, reset } = useDrawCards();
-  const [revealed, setRevealed] = useState(false);
+  const [revealed, setRevealed] = useState<Record<number, boolean>>({});
 
   // Initial draw on mount
   useState(() => {
-    draw({ mode });
+    if (mode === 'past-present-future') {
+      // Need 3 cards
+      draw({ mode: 'image', count: 3 } as any);
+    } else {
+      draw({ mode: mode as any });
+    }
   });
 
   const handleDrawAgain = () => {
-    setRevealed(false);
-    // Slight delay to allow flip back animation if desired, or just reset immediately
+    setRevealed({});
     setTimeout(() => {
       reset();
-      draw({ mode });
+      if (mode === 'past-present-future') {
+        draw({ mode: 'image', count: 3 } as any);
+      } else {
+        draw({ mode: mode as any });
+      }
     }, 300);
+  };
+
+  const toggleReveal = (index: number) => {
+    setRevealed(prev => ({ ...prev, [index]: true }));
   };
 
   const hasData = data && data.cards && data.cards.length > 0;
@@ -108,9 +126,6 @@ function ActiveSpread({
       </div>
     );
   } else if (mode === 'pair') {
-    // For pair, we expect 2 cards: [Image, Word] (backend logic handles this)
-    // We assume backend returns [ImageCard, WordCard] or similar. 
-    // Let's robustly find them.
     const img = data.cards.find(c => c.type === 'image');
     const word = data.cards.find(c => c.type === 'word');
 
@@ -120,26 +135,46 @@ function ActiveSpread({
            <PairDisplay 
              imageCard={img} 
              wordCard={word} 
-             isRevealed={revealed} 
-             onClick={() => setRevealed(true)} 
+             isRevealed={revealed[0]} 
+             onClick={() => toggleReveal(0)} 
            />
          </div>
       );
     }
+  } else if (mode === 'past-present-future') {
+    const labels = ['过去', '现在', '未来'];
+    displayContent = (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full py-8">
+        {data.cards.slice(0, 3).map((card, idx) => (
+          <div key={idx} className="flex flex-col items-center space-y-4">
+            <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{labels[idx]}</span>
+            <CardDisplay 
+              card={card} 
+              size="sm" 
+              isRevealed={revealed[idx]} 
+              onClick={() => toggleReveal(idx)} 
+            />
+          </div>
+        ))}
+      </div>
+    );
   } else {
-    // Single card modes
     const card = data.cards[0];
     displayContent = (
       <div className="flex justify-center items-center py-12">
         <CardDisplay 
           card={card} 
           size="lg" 
-          isRevealed={revealed} 
-          onClick={() => setRevealed(true)} 
+          isRevealed={revealed[0]} 
+          onClick={() => toggleReveal(0)} 
         />
       </div>
     );
   }
+
+  const allRevealed = mode === 'past-present-future' 
+    ? (revealed[0] && revealed[1] && revealed[2])
+    : revealed[0];
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -149,15 +184,16 @@ function ActiveSpread({
           <ArrowLeft className="w-4 h-4" /> 返回选择
         </Button>
         <div className="text-center">
-          <h2 className="text-2xl font-display font-bold capitalize">
-            {mode === 'pair' ? 'OH 组合牌阵' : `单张${mode === 'image' ? '图卡' : '字卡'}牌阵`}
+          <h2 className="text-2xl font-display font-bold">
+            {mode === 'pair' ? 'OH 经典组合' : 
+             mode === 'past-present-future' ? '时间轴牌阵 (过去/现在/未来)' :
+             `单张${mode === 'image' ? '图卡' : '字卡'}牌阵`}
           </h2>
         </div>
-        <div className="w-24" /> {/* Spacer for balance */}
+        <div className="w-24" />
       </div>
 
-      {/* Main Card Area */}
-      <div className="min-h-[500px] flex flex-col items-center justify-center bg-secondary/20 rounded-3xl border-2 border-dashed border-border p-8">
+      <div className="min-h-[500px] flex flex-col items-center justify-center bg-secondary/10 rounded-3xl border-2 border-dashed border-border p-8 relative overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={isPending ? 'loading' : 'content'}
@@ -173,20 +209,22 @@ function ActiveSpread({
         
         {!isPending && hasData && (
           <div className="mt-8 text-center space-y-2">
-            {!revealed ? (
+            {!allRevealed ? (
               <p className="text-muted-foreground animate-bounce">点击卡片翻牌</p>
             ) : (
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="space-y-4"
+                className="space-y-6"
               >
                 <p className="font-hand text-2xl text-primary max-w-md mx-auto">
-                  “这在此时此刻唤起了你什么？”
+                  “这触动了你内心深处的什么？”
                 </p>
-                <Button onClick={handleDrawAgain} size="lg" className="gap-2 shadow-lg hover:shadow-xl transition-all">
-                  <RotateCcw className="w-4 h-4" /> 重新抽取
-                </Button>
+                <div className="flex justify-center gap-4">
+                  <Button onClick={handleDrawAgain} size="lg" variant="outline" className="gap-2">
+                    <RotateCcw className="w-4 h-4" /> 重新抽取
+                  </Button>
+                </div>
               </motion.div>
             )}
           </div>
@@ -198,7 +236,7 @@ function ActiveSpread({
 
 // --- Main Page Component ---
 export default function Spreads() {
-  const [activeMode, setActiveMode] = useState<'image' | 'word' | 'pair' | null>(null);
+  const [activeMode, setActiveMode] = useState<string | null>(null);
 
   return (
     <Layout>
