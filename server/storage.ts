@@ -75,7 +75,21 @@ export class DatabaseStorage implements IStorage {
     const newCards: InsertCard[] = [];
 
     const imageMap: Record<number, string> = {
+      61: "61_1768115306541.jpg",
+      62: "62_1768115306540.jpg",
+      63: "63_1768115306540.jpg",
+      64: "64_1768115306540.jpg",
+      65: "65_1768115306539.jpg",
+      66: "66_1768115306535.jpg",
+      67: "67_1768115306525.jpg",
       68: "68_1768113123930.jpg",
+      69: "69_1768115306537.jpg",
+      70: "70_1768115306535.jpg",
+      71: "71_1768115306533.jpg",
+      72: "72_1768115306529.jpg",
+      73: "73_1768115306534.jpg",
+      74: "74_1768115306524.jpg",
+      75: "75_1768115306536.jpg",
       76: "76_1768113123929.jpg",
       77: "77_1768113123930.jpg",
       78: "78_1768113123929.jpg",
@@ -91,7 +105,6 @@ export class DatabaseStorage implements IStorage {
       88: "88_1768113109973.jpg",
     };
 
-    // Seed 88 Image Cards
     for (let i = 1; i <= 88; i++) {
       const filename = imageMap[i];
       newCards.push({
