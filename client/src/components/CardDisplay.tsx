@@ -67,9 +67,11 @@ export function CardDisplay({
                 onError={(e) => {
                   // Fallback if image fails
                   const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  target.parentElement!.classList.add('flex', 'items-center', 'justify-center', 'bg-secondary/50');
-                  target.parentElement!.innerHTML = `<span class="text-muted-foreground font-display text-lg">图卡 #${card.number}</span>`;
+                  if (target.parentElement) {
+                    target.style.display = 'none';
+                    target.parentElement.classList.add('flex', 'items-center', 'justify-center', 'bg-secondary/50');
+                    target.parentElement.innerHTML = `<span class="text-muted-foreground font-display text-lg">图卡 #${card.number}</span>`;
+                  }
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
