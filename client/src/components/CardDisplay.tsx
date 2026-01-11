@@ -35,6 +35,7 @@ export function CardDisplay({
     >
       <motion.div
         className="w-full h-full relative transform-style-3d transition-all duration-700"
+        initial={false}
         animate={{ rotateY: isRevealed ? 0 : 180 }}
         whileHover={{ scale: 1.05, y: -5 }}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
@@ -116,6 +117,7 @@ export function PairDisplay({
     >
        <motion.div
         className="w-full h-full relative transform-style-3d transition-all duration-700"
+        initial={false}
         animate={{ rotateY: isRevealed ? 0 : 180 }}
         whileHover={{ scale: 1.02 }}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
