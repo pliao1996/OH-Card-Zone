@@ -151,7 +151,7 @@ function ActiveSpread({
             <CardDisplay 
               card={card} 
               size="sm" 
-              isRevealed={revealed[idx]} 
+              isRevealed={revealed[idx] || false} 
               onClick={() => toggleReveal(idx)} 
             />
           </div>
