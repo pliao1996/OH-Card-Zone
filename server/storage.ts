@@ -75,18 +75,35 @@ export class DatabaseStorage implements IStorage {
 
     const newCards: InsertCard[] = [];
 
+    // Mapped image filenames based on uploaded assets
+    const imageMap: Record<number, string> = {
+      68: "68_1768113123930.jpg",
+      76: "76_1768113123929.jpg",
+      77: "77_1768113123930.jpg",
+      78: "78_1768113123929.jpg",
+      79: "79_1768113123929.jpg",
+      80: "80_1768113123930.jpg",
+      81: "81_1768113123927.jpg",
+      82: "82_1768113109974.jpg",
+      83: "83_1768113109974.jpg",
+      84: "84_1768113109974.jpg",
+      85: "85_1768113109971.jpg",
+      86: "86_1768113109973.jpg",
+      87: "87_1768113109972.jpg",
+      88: "88_1768113109973.jpg",
+    };
+
     // Seed 88 Image Cards
     for (let i = 1; i <= 88; i++) {
       newCards.push({
         type: 'image',
         number: i,
-        content: `image_${i}.jpg`, // Placeholder filename
+        content: imageMap[i] || `image_${i}.jpg`,
         title: `Image Card ${i}`
       });
     }
 
     // Seed 100 Word Cards
-    // Using some placeholder words for now, in a real app these would be the actual OH words
     const placeholderWords = [
       "Letting Go", "Love", "Fear", "Hope", "Change", "Childhood", "Dreams", "Family", 
       "Guilt", "Joy", "Pain", "Play", "Power", "Shame", "Trust", "Truth"
