@@ -56,15 +56,19 @@ export default function Home() {
 
           {/* Spreads Card */}
           <Link href="/spreads" className="group relative block p-8 rounded-3xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-             <div className="absolute -bottom-4 -right-4 p-4 opacity-10">
-              <Layers className="w-32 h-32" />
+             <div className="absolute top-4 right-4 w-24 md:w-32 transform -rotate-6 opacity-80 group-hover:opacity-100 group-hover:rotate-0 transition-all duration-300 z-20">
+              <img 
+                src="/images/oh_spread_preview.png" 
+                alt="OH Cards Spread" 
+                className="rounded-lg shadow-md border-2 border-white/50"
+              />
             </div>
             <div className="relative z-10 flex flex-col h-full items-start text-left">
               <div className="p-3 rounded-xl bg-white/10 text-white mb-4">
                 <Layers className="w-6 h-6" />
               </div>
               <h3 className="text-2xl font-bold text-white mb-2">开始抽取</h3>
-              <p className="text-primary-foreground/80 mb-6">抽取卡片以获取对问题或现状的洞察。</p>
+              <p className="text-primary-foreground/80 mb-6 max-w-[60%]">抽取卡片以获取对问题或现状的洞察。</p>
               <div className="mt-auto flex items-center text-white font-medium group-hover:translate-x-1 transition-transform">
                 开始探索 <ArrowRight className="ml-2 w-4 h-4" />
               </div>
