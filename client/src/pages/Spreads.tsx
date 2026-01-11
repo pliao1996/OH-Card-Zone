@@ -113,7 +113,7 @@ function ActiveSpread({
     setRevealed(prev => ({ ...prev, [index]: true }));
   };
 
-  const hasData = data && data.cards && data.cards.length > 0;
+  const hasData = data && data.cards && data.cards.length >= (mode === 'past-present-future' ? 3 : 1);
   
   // Prepare cards based on mode
   let displayContent;
@@ -135,7 +135,7 @@ function ActiveSpread({
            <PairDisplay 
              imageCard={img} 
              wordCard={word} 
-             isRevealed={revealed[0]} 
+             isRevealed={revealed[0] || false} 
              onClick={() => toggleReveal(0)} 
            />
          </div>
@@ -143,9 +143,10 @@ function ActiveSpread({
     }
   } else if (mode === 'past-present-future') {
     const labels = ['过去', '现在', '未来'];
+    const cards = data.cards.slice(0, 3);
     displayContent = (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full py-8">
-        {data.cards.slice(0, 3).map((card, idx) => (
+        {cards.map((card, idx) => (
           <div key={idx} className="flex flex-col items-center space-y-4">
             <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{labels[idx]}</span>
             <CardDisplay 
@@ -165,7 +166,7 @@ function ActiveSpread({
         <CardDisplay 
           card={card} 
           size="lg" 
-          isRevealed={revealed[0]} 
+          isRevealed={revealed[0] || false} 
           onClick={() => toggleReveal(0)} 
         />
       </div>
