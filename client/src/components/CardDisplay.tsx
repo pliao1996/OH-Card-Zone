@@ -79,14 +79,15 @@ export function CardDisplay({
 
         {/* BACK SIDE (Cover) */}
         <div className={cn(
-          "absolute inset-0 backface-hidden rotate-y-180 w-full h-full rounded-xl shadow-md",
-          "bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center",
-          "border-4 border-white/10"
+          "absolute inset-0 backface-hidden rotate-y-180 w-full h-full rounded-xl shadow-md overflow-hidden",
+          "bg-white flex items-center justify-center",
+          "border border-border/50"
         )}>
-          <div className="w-full h-full opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat" />
-          <div className="absolute inset-0 flex items-center justify-center">
-             <span className="font-display text-primary-foreground/90 text-4xl font-bold tracking-widest opacity-80">OH</span>
-          </div>
+          <img 
+            src="/images/card_back_image.png" 
+            alt="Card Back"
+            className="w-full h-full object-cover"
+          />
         </div>
       </motion.div>
     </div>
@@ -138,11 +139,15 @@ export function PairDisplay({
 
         {/* BACK */}
         <div className={cn(
-          "absolute inset-0 backface-hidden rotate-y-180 w-full h-full rounded-xl shadow-lg",
-          "bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center",
-          "border-4 border-white/10"
+          "absolute inset-0 backface-hidden rotate-y-180 w-full h-full rounded-xl shadow-lg overflow-hidden",
+          "bg-white flex items-center justify-center",
+          "border border-border/50"
         )}>
-           <span className="font-display text-white text-5xl font-bold tracking-widest opacity-90">OH</span>
+          <img 
+            src="/images/card_back_image.png" 
+            alt="Card Back"
+            className="w-full h-full object-cover"
+          />
         </div>
       </motion.div>
     </div>
