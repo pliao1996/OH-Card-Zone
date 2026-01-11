@@ -92,6 +92,9 @@ function ActiveSpread({
     if (mode === 'past-present-future') {
       // Need 3 cards
       draw({ mode: 'image', count: 3 } as any);
+    } else if (mode === 'pair') {
+      // Pair mode needs both image and word
+      draw({ mode: 'pair' } as any);
     } else {
       draw({ mode: mode as any });
     }
