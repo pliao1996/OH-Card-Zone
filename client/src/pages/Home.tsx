@@ -13,8 +13,15 @@ export default function Home() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="space-y-6"
+          className="relative space-y-6"
         >
+          <div className="absolute -top-24 -right-12 md:-right-24 w-32 md:w-48 transform rotate-12 hidden sm:block">
+            <img 
+              src="/images/oh_box_cover.png" 
+              alt="OH Cards Box" 
+              className="rounded-xl shadow-2xl border-4 border-white/20"
+            />
+          </div>
           <span className="inline-block px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium tracking-wide">
             探索你的内心世界
           </span>
