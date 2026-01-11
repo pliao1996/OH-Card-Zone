@@ -13,15 +13,8 @@ export default function Home() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative space-y-6"
+          className="space-y-6"
         >
-          <div className="absolute -top-24 -right-12 md:-right-24 w-32 md:w-48 transform rotate-12 hidden sm:block">
-            <img 
-              src="/images/oh_box_cover.png" 
-              alt="OH Cards Box" 
-              className="rounded-xl shadow-2xl border-4 border-white/20"
-            />
-          </div>
           <span className="inline-block px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium tracking-wide">
             探索你的内心世界
           </span>
@@ -42,15 +35,19 @@ export default function Home() {
         >
           {/* Gallery Card */}
           <Link href="/gallery" className="group relative block p-8 rounded-3xl bg-white border border-border/50 shadow-sm hover:shadow-xl hover:border-accent/30 transition-all duration-300 overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-              <Grid className="w-24 h-24" />
+            <div className="absolute top-4 right-4 w-24 md:w-32 transform rotate-6 opacity-80 group-hover:opacity-100 group-hover:rotate-0 transition-all duration-300 z-20">
+              <img 
+                src="/images/oh_box_cover.png" 
+                alt="OH Cards Box" 
+                className="rounded-lg shadow-md border-2 border-white/50"
+              />
             </div>
             <div className="relative z-10 flex flex-col h-full items-start text-left">
               <div className="p-3 rounded-xl bg-secondary text-primary mb-4 group-hover:bg-accent group-hover:text-white transition-colors">
                 <Grid className="w-6 h-6" />
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-2">浏览收藏</h3>
-              <p className="text-muted-foreground mb-6">探索完整的 88 张图卡和 100 张字卡。</p>
+              <p className="text-muted-foreground mb-6 max-w-[60%]">探索完整的 88 张图卡和 100 张字卡。</p>
               <div className="mt-auto flex items-center text-primary font-medium group-hover:translate-x-1 transition-transform">
                 查看画廊 <ArrowRight className="ml-2 w-4 h-4" />
               </div>
