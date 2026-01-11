@@ -11,9 +11,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
-    { label: "Home", href: "/", icon: Home },
-    { label: "Gallery", href: "/gallery", icon: Grid },
-    { label: "Spreads", href: "/spreads", icon: Layers },
+    { label: "首页", href: "/", icon: Home },
+    { label: "卡片库", href: "/gallery", icon: Grid },
+    { label: "牌阵", href: "/spreads", icon: Layers },
   ];
 
   return (

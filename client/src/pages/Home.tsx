@@ -19,7 +19,7 @@ export default function Home() {
             探索你的内心世界
           </span>
           <h1 className="text-5xl md:text-7xl font-display font-bold text-primary leading-tight">
-            用 OH 卡 <br/> 开启潜意识之门
+            用 OH 卡开启潜意识之门
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             一个关于直觉、叙事和自我发现的工具。

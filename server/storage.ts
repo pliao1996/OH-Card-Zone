@@ -91,12 +91,14 @@ export class DatabaseStorage implements IStorage {
       88: "88_1768113109973.jpg",
     };
 
+    // Seed 88 Image Cards
     for (let i = 1; i <= 88; i++) {
+      const filename = imageMap[i];
       newCards.push({
         type: 'image',
         number: i,
-        content: imageMap[i] || `image_${i}.jpg`,
-        title: `图卡 ${i}`
+        content: filename || `image_${i}.jpg`,
+        title: filename || `图卡 ${i}`
       });
     }
 
