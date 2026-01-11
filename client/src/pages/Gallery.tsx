@@ -30,14 +30,14 @@ export default function Gallery() {
       <div className="space-y-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-display font-bold text-primary">Card Gallery</h1>
-            <p className="text-muted-foreground mt-2">Browse the complete collection of OH cards.</p>
+            <h1 className="text-4xl font-display font-bold text-primary">卡片库</h1>
+            <p className="text-muted-foreground mt-2">浏览完整的 OH 卡系列。</p>
           </div>
           <div className="relative w-full md:w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input 
-              placeholder="Search cards..." 
-              className="pl-10 bg-white"
+            <input 
+              placeholder="搜索卡片..." 
+              className="pl-10 bg-white flex h-10 w-full rounded-md border border-input px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -46,8 +46,8 @@ export default function Gallery() {
 
         <Tabs defaultValue="image" className="w-full">
           <TabsList className="mb-8 p-1 bg-secondary/50 border border-border/50 rounded-xl">
-            <TabsTrigger value="image" className="rounded-lg px-8 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">Image Cards ({imageCards?.length || 0})</TabsTrigger>
-            <TabsTrigger value="word" className="rounded-lg px-8 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">Word Cards ({wordCards?.length || 0})</TabsTrigger>
+            <TabsTrigger value="image" className="rounded-lg px-8 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">图卡 ({imageCards?.length || 0})</TabsTrigger>
+            <TabsTrigger value="word" className="rounded-lg px-8 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">字卡 ({wordCards?.length || 0})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="image" className="mt-0">
@@ -64,7 +64,7 @@ export default function Gallery() {
                    />
                  ))}
                  {filterCards(imageCards).length === 0 && (
-                   <div className="col-span-full py-12 text-center text-muted-foreground">No image cards found.</div>
+                   <div className="col-span-full py-12 text-center text-muted-foreground">未找到图卡。</div>
                  )}
                </div>
              )}
@@ -84,7 +84,7 @@ export default function Gallery() {
                    />
                  ))}
                  {filterCards(wordCards).length === 0 && (
-                   <div className="col-span-full py-12 text-center text-muted-foreground">No word cards found.</div>
+                   <div className="col-span-full py-12 text-center text-muted-foreground">未找到字卡。</div>
                  )}
                </div>
              )}

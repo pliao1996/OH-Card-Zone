@@ -14,20 +14,20 @@ function SpreadSelection({ onSelect }: { onSelect: (mode: 'image' | 'word' | 'pa
   const options = [
     { 
       id: 'image', 
-      title: 'Single Image', 
-      desc: 'Draw one image card to prompt a feeling or memory.',
+      title: '单张图卡', 
+      desc: '抽取一张图卡，激发情感或记忆。',
       bg: 'bg-orange-50 hover:bg-orange-100 border-orange-100'
     },
     { 
       id: 'word', 
-      title: 'Single Word', 
-      desc: 'Draw one word card to provide a theme or context.',
+      title: '单张字卡', 
+      desc: '抽取一张字卡，提供主题或背景。',
       bg: 'bg-blue-50 hover:bg-blue-100 border-blue-100'
     },
     { 
       id: 'pair', 
-      title: 'The OH Pair', 
-      desc: 'Combine an image and a word for deep insight.',
+      title: 'OH 组合', 
+      desc: '结合图像和文字，获得深度洞察。',
       bg: 'bg-purple-50 hover:bg-purple-100 border-purple-100',
       featured: true
     },
@@ -36,8 +36,8 @@ function SpreadSelection({ onSelect }: { onSelect: (mode: 'image' | 'word' | 'pa
   return (
     <div className="max-w-4xl mx-auto text-center space-y-12">
       <div className="space-y-4">
-        <h1 className="text-4xl md:text-5xl font-display font-bold text-primary">Choose a Spread</h1>
-        <p className="text-muted-foreground text-lg">Select how you want to interact with the cards today.</p>
+        <h1 className="text-4xl md:text-5xl font-display font-bold text-primary">选择牌阵</h1>
+        <p className="text-muted-foreground text-lg">选择你今天想要与卡片互动的方式。</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
@@ -53,13 +53,13 @@ function SpreadSelection({ onSelect }: { onSelect: (mode: 'image' | 'word' | 'pa
           >
             {opt.featured && (
               <div className="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-3 py-1 rounded-bl-xl">
-                POPULAR
+                热门选择
               </div>
             )}
             <h3 className="text-2xl font-bold font-display text-foreground mb-3">{opt.title}</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">{opt.desc}</p>
             <div className="mt-auto pt-6 text-sm font-semibold text-primary uppercase tracking-wider">
-              Start &rarr;
+              开始 &rarr;
             </div>
           </button>
         ))}
@@ -104,7 +104,7 @@ function ActiveSpread({
     displayContent = (
       <div className="flex flex-col items-center justify-center h-96 w-full">
         <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-        <p className="font-display text-xl text-muted-foreground animate-pulse">Shuffling deck...</p>
+        <p className="font-display text-xl text-muted-foreground animate-pulse">洗牌中...</p>
       </div>
     );
   } else if (mode === 'pair') {
@@ -146,11 +146,11 @@ function ActiveSpread({
       {/* Header controls */}
       <div className="flex items-center justify-between mb-8">
         <Button variant="ghost" onClick={onBack} className="gap-2">
-          <ArrowLeft className="w-4 h-4" /> Back to Selection
+          <ArrowLeft className="w-4 h-4" /> 返回选择
         </Button>
         <div className="text-center">
           <h2 className="text-2xl font-display font-bold capitalize">
-            {mode === 'pair' ? 'OH Pair Spread' : `Single ${mode} Card`}
+            {mode === 'pair' ? 'OH 组合牌阵' : `单张${mode === 'image' ? '图卡' : '字卡'}牌阵`}
           </h2>
         </div>
         <div className="w-24" /> {/* Spacer for balance */}
@@ -174,7 +174,7 @@ function ActiveSpread({
         {!isPending && hasData && (
           <div className="mt-8 text-center space-y-2">
             {!revealed ? (
-              <p className="text-muted-foreground animate-bounce">Click card to reveal</p>
+              <p className="text-muted-foreground animate-bounce">点击卡片翻牌</p>
             ) : (
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
@@ -182,10 +182,10 @@ function ActiveSpread({
                 className="space-y-4"
               >
                 <p className="font-hand text-2xl text-primary max-w-md mx-auto">
-                  "What does this evoke in you right now?"
+                  “这在此时此刻唤起了你什么？”
                 </p>
                 <Button onClick={handleDrawAgain} size="lg" className="gap-2 shadow-lg hover:shadow-xl transition-all">
-                  <RotateCcw className="w-4 h-4" /> Draw Again
+                  <RotateCcw className="w-4 h-4" /> 重新抽取
                 </Button>
               </motion.div>
             )}
