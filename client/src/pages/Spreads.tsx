@@ -216,9 +216,10 @@ function ActiveSpread({
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 1 }}
                 className="space-y-6"
               >
-                <p className="font-hand text-2xl text-primary max-w-md mx-auto">
+                <p className="font-hand text-2xl text-primary max-w-md mx-auto italic">
                   “这触动了你内心深处的什么？”
                 </p>
                 <div className="flex justify-center gap-4">
