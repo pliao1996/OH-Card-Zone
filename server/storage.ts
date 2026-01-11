@@ -43,7 +43,6 @@ export class DatabaseStorage implements IStorage {
         title: row.title as string
       }));
     } else {
-      // Pair
       const imgResult = await db.execute(sql`SELECT * FROM cards WHERE type = 'image' ORDER BY RANDOM() LIMIT 1`);
       const wordResult = await db.execute(sql`SELECT * FROM cards WHERE type = 'word' ORDER BY RANDOM() LIMIT 1`);
       
@@ -75,7 +74,6 @@ export class DatabaseStorage implements IStorage {
 
     const newCards: InsertCard[] = [];
 
-    // Mapped image filenames based on uploaded assets
     const imageMap: Record<number, string> = {
       68: "68_1768113123930.jpg",
       76: "76_1768113123929.jpg",
@@ -93,34 +91,34 @@ export class DatabaseStorage implements IStorage {
       88: "88_1768113109973.jpg",
     };
 
-    // Seed 88 Image Cards
     for (let i = 1; i <= 88; i++) {
       newCards.push({
         type: 'image',
         number: i,
         content: imageMap[i] || `image_${i}.jpg`,
-        title: `Image Card ${i}`
+        title: `图卡 ${i}`
       });
     }
 
-    // Seed 100 Word Cards
-    const placeholderWords = [
-      "Letting Go", "Love", "Fear", "Hope", "Change", "Childhood", "Dreams", "Family", 
-      "Guilt", "Joy", "Pain", "Play", "Power", "Shame", "Trust", "Truth"
+    const ohWords = [
+      "放下", "爱", "恐惧", "希望", "改变", "童年", "梦想", "家庭", 
+      "愧疚", "快乐", "痛苦", "游戏", "力量", "羞耻", "信任", "真理",
+      "孤独", "友谊", "背叛", "成功", "失败", "冒险", "安全", "冲突",
+      "和平", "自然", "城市", "劳动", "休息", "死亡", "出生", "时间"
     ];
     
     for (let i = 1; i <= 100; i++) {
-      const word = placeholderWords[(i - 1) % placeholderWords.length];
+      const word = ohWords[(i - 1) % ohWords.length];
       newCards.push({
         type: 'word',
         number: i,
-        content: i <= placeholderWords.length ? word : `${word} ${Math.ceil(i / placeholderWords.length)}`,
-        title: `Word Card ${i}`
+        content: word,
+        title: `字卡 ${i}`
       });
     }
 
     await db.insert(cards).values(newCards);
-    console.log("Database seeded with OH Cards");
+    console.log("Database seeded with OH Cards (Chinese)");
   }
 }
 
