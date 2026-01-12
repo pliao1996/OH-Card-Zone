@@ -26,6 +26,7 @@ export function CardDisplay({
   };
 
   const isWord = card.type === 'word';
+  const isImageContent = typeof card.content === 'string' && card.content.match(/\.(jpg|jpeg|png|webp|gif)$/i);
 
   return (
     <div 
@@ -44,9 +45,9 @@ export function CardDisplay({
         <div className={cn(
           "absolute inset-0 backface-hidden w-full h-full rounded-xl shadow-lg border border-border/50 overflow-hidden",
           "bg-white flex items-center justify-center",
-          isWord ? "p-6" : "p-0"
+          isWord && !isImageContent ? "p-6" : "p-0"
         )}>
-          {isWord ? (
+          {isWord && !isImageContent ? (
             <div className="text-center">
                {/* Word cards often have a smaller word inside a frame or just text */}
                <div className="border-2 border-primary/10 rounded-lg p-4 w-full h-full flex items-center justify-center">
@@ -62,7 +63,7 @@ export function CardDisplay({
             <div className="w-full h-full relative bg-gray-100">
               {/* Dynamic image path handling */}
               <img 
-                src={card.content.startsWith('http') ? card.content : `/images/${card.content}`} 
+                src={card.content.startsWith('http') ? card.content : `/attached_assets/${card.content}`} 
                 alt={card.title}
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -127,17 +128,27 @@ export function PairDisplay({
           {/* Base: Image Card */}
           <div className="absolute inset-4 top-4 bottom-24 rounded-lg overflow-hidden shadow-inner border border-border/20">
              <img 
-                src={imageCard.content.startsWith('http') ? imageCard.content : `/images/${imageCard.content}`} 
+                src={imageCard.content.startsWith('http') ? imageCard.content : `/attached_assets/${imageCard.content}`} 
                 alt={imageCard.title}
                 className="w-full h-full object-cover"
               />
           </div>
           
           {/* Overlay: Word Card (at the bottom/surrounding) */}
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-white flex items-center justify-center border-t border-border/10">
-            <span className="font-display font-bold text-3xl text-primary tracking-widest uppercase drop-shadow-sm">
-              {wordCard.content}
-            </span>
+          <div className="absolute inset-0 pointer-events-none">
+            {wordCard.content.match(/\.(jpg|jpeg|png|webp|gif)$/i) ? (
+              <img 
+                src={`/attached_assets/${wordCard.content}`}
+                alt={wordCard.title}
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <div className="absolute bottom-0 left-0 right-0 h-24 bg-white flex items-center justify-center border-t border-border/10">
+                <span className="font-display font-bold text-3xl text-primary tracking-widest uppercase drop-shadow-sm">
+                  {wordCard.content}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
