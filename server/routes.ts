@@ -30,7 +30,7 @@ export async function registerRoutes(
   app.post(api.cards.draw.path, async (req, res) => {
     try {
       const input = api.cards.draw.input.parse(req.body);
-      const cards = await storage.drawCards(input.mode);
+      const cards = await storage.drawCards(input.mode, input.count);
       res.json({ cards });
     } catch (err) {
       if (err instanceof z.ZodError) {

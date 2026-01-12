@@ -6,7 +6,7 @@ import { eq, sql } from "drizzle-orm";
 export interface IStorage {
   getCards(type?: 'image' | 'word'): Promise<Card[]>;
   getCard(id: number): Promise<Card | undefined>;
-  drawCards(mode: 'image' | 'word' | 'pair'): Promise<Card[]>;
+  drawCards(mode: 'image' | 'word' | 'pair', count?: number): Promise<Card[]>;
   seedCards(): Promise<void>;
 }
 
@@ -23,9 +23,9 @@ export class DatabaseStorage implements IStorage {
     return card;
   }
 
-  async drawCards(mode: 'image' | 'word' | 'pair'): Promise<Card[]> {
+  async drawCards(mode: 'image' | 'word' | 'pair', count: number = 1): Promise<Card[]> {
     if (mode === 'image') {
-      const result = await db.execute(sql`SELECT * FROM cards WHERE type = 'image' ORDER BY RANDOM() LIMIT 1`);
+      const result = await db.execute(sql`SELECT * FROM cards WHERE type = 'image' ORDER BY RANDOM() LIMIT ${count}`);
       return result.rows.map(row => ({
         id: row.id as number,
         type: row.type as string,
@@ -34,7 +34,7 @@ export class DatabaseStorage implements IStorage {
         title: row.title as string
       }));
     } else if (mode === 'word') {
-      const result = await db.execute(sql`SELECT * FROM cards WHERE type = 'word' ORDER BY RANDOM() LIMIT 1`);
+      const result = await db.execute(sql`SELECT * FROM cards WHERE type = 'word' ORDER BY RANDOM() LIMIT ${count}`);
       return result.rows.map(row => ({
         id: row.id as number,
         type: row.type as string,
@@ -43,28 +43,34 @@ export class DatabaseStorage implements IStorage {
         title: row.title as string
       }));
     } else {
-      const imgResult = await db.execute(sql`SELECT * FROM cards WHERE type = 'image' ORDER BY RANDOM() LIMIT 1`);
-      const wordResult = await db.execute(sql`SELECT * FROM cards WHERE type = 'word' ORDER BY RANDOM() LIMIT 1`);
-      
-      const imgCard = imgResult.rows[0];
-      const wordCard = wordResult.rows[0];
-
-      return [
-        {
-          id: imgCard.id as number,
-          type: imgCard.type as string,
-          number: imgCard.number as number,
-          content: imgCard.content as string,
-          title: imgCard.title as string
-        },
-        {
-          id: wordCard.id as number,
-          type: wordCard.type as string,
-          number: wordCard.number as number,
-          content: wordCard.content as string,
-          title: wordCard.title as string
+      // For pair mode, we usually want 1 image + 1 word, or multiple pairs if count > 1
+      const cards: Card[] = [];
+      for (let i = 0; i < count; i++) {
+        const imgResult = await db.execute(sql`SELECT * FROM cards WHERE type = 'image' ORDER BY RANDOM() LIMIT 1`);
+        const wordResult = await db.execute(sql`SELECT * FROM cards WHERE type = 'word' ORDER BY RANDOM() LIMIT 1`);
+        
+        if (imgResult.rows[0]) {
+          const imgCard = imgResult.rows[0];
+          cards.push({
+            id: imgCard.id as number,
+            type: imgCard.type as string,
+            number: imgCard.number as number,
+            content: imgCard.content as string,
+            title: imgCard.title as string
+          });
         }
-      ];
+        if (wordResult.rows[0]) {
+          const wordCard = wordResult.rows[0];
+          cards.push({
+            id: wordCard.id as number,
+            type: wordCard.type as string,
+            number: wordCard.number as number,
+            content: wordCard.content as string,
+            title: wordCard.title as string
+          });
+        }
+      }
+      return cards;
     }
   }
 

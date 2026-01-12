@@ -46,6 +46,7 @@ export const api = {
       path: '/api/draw',
       input: z.object({
         mode: z.enum(['image', 'word', 'pair']),
+        count: z.number().int().min(1).max(10).optional(),
       }),
       responses: {
         200: z.object({
