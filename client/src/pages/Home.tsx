@@ -47,7 +47,7 @@ export default function Home() {
                 <Grid className="w-6 h-6" />
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-2">浏览收藏</h3>
-              <p className="text-muted-foreground mb-6 max-w-[60%]">探索完整的 88 张图卡和 100 张字卡。</p>
+              <p className="text-muted-foreground mb-6 max-w-[60%]">探索完整的 88 张图卡和 88 张字卡。</p>
               <div className="mt-auto flex items-center text-primary font-medium group-hover:translate-x-1 transition-transform">
                 查看画廊 <ArrowRight className="ml-2 w-4 h-4" />
               </div>
@@ -89,7 +89,7 @@ export default function Home() {
            </div>
            <div className="space-y-4">
              <div className="w-16 h-16 mx-auto rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-6">
-               <span className="font-display text-3xl font-bold">100</span>
+               <span className="font-display text-3xl font-bold">88</span>
              </div>
              <h3 className="text-xl font-bold">字卡</h3>
              <p className="text-muted-foreground">为图像提供框架或背景的词汇。</p>
