@@ -63,7 +63,7 @@ export function CardDisplay({
             <div className="w-full h-full relative bg-gray-50 flex items-center justify-center">
               {/* Dynamic image path handling */}
               <img 
-                src={card.content.startsWith('http') ? card.content : `@assets/${card.content}`} 
+                src={card.content.startsWith('http') ? card.content : `/images/${card.content}`} 
                 alt={card.title}
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -128,7 +128,7 @@ export function PairDisplay({
           {/* Base: Image Card */}
           <div className="absolute inset-4 top-4 bottom-24 rounded-lg overflow-hidden shadow-inner border border-border/20">
              <img 
-                src={imageCard.content.startsWith('http') ? imageCard.content : `@assets/${imageCard.content}`} 
+                src={imageCard.content.startsWith('http') ? imageCard.content : `/images/${imageCard.content}`} 
                 alt={imageCard.title}
                 className="w-full h-full object-cover"
               />
@@ -138,7 +138,7 @@ export function PairDisplay({
           <div className="absolute inset-0 pointer-events-none">
             {wordCard.content.match(/\.(jpg|jpeg|png|webp|gif)$/i) || wordCard.content.includes('_') ? (
               <img 
-                src={`@assets/${wordCard.content}`}
+                src={`/images/${wordCard.content}`}
                 alt={wordCard.title}
                 className="w-full h-full object-contain"
               />
