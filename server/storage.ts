@@ -238,7 +238,7 @@ export class DatabaseStorage implements IStorage {
         type: 'word',
         number: i,
         content: filename || word,
-        title: `字卡 ${i}`
+        title: filename ? `字卡 ${i}` : word
       });
     }
 
