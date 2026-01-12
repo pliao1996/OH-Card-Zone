@@ -217,9 +217,9 @@ function ActiveSpread({
               <p className="text-muted-foreground animate-bounce">点击卡片翻牌</p>
             ) : (
               <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8, duration: 1 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.5, duration: 1 }}
                 className="space-y-6"
               >
                 <p className="font-hand text-2xl text-primary max-w-md mx-auto italic">
