@@ -86,6 +86,19 @@ function ActiveSpread({
 }) {
   const { mutate: draw, data, isPending, reset } = useDrawCards();
   const [revealed, setRevealed] = useState<Record<number, boolean>>({});
+  const [questionIndex, setQuestionIndex] = useState(0);
+
+  const questions = [
+    "“这触动了你内心深处的什么？”",
+    "“这张卡片让你想到了生活中的哪个人或哪件事？”",
+    "“如果这张卡片会说话，它会对你说什么？”",
+    "“这张卡片描述了你现在的什么状态？”",
+    "“看着这张卡片，你的身体有什么感觉？”"
+  ];
+
+  const handleNextQuestion = () => {
+    setQuestionIndex((prev) => (prev + 1) % questions.length);
+  };
 
   // Initial draw on mount
   useState(() => {
@@ -194,7 +207,13 @@ function ActiveSpread({
              `单张${mode === 'image' ? '图卡' : '字卡'}牌阵`}
           </h2>
         </div>
-        <div className="w-24" />
+        <div className="w-24">
+          {!isPending && hasData && (
+            <Button onClick={handleDrawAgain} variant="outline" size="sm" className="gap-2">
+              <RotateCcw className="w-4 h-4" /> 重新抽取
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="min-h-[500px] flex flex-col items-center justify-center bg-secondary/10 rounded-3xl border-2 border-dashed border-border p-8 relative overflow-hidden">
@@ -222,12 +241,17 @@ function ActiveSpread({
                 transition={{ delay: 1.5, duration: 1 }}
                 className="space-y-6"
               >
-                <p className="font-hand text-2xl text-primary max-w-md mx-auto italic">
-                  “这触动了你内心深处的什么？”
-                </p>
-                <div className="flex justify-center gap-4">
-                  <Button onClick={handleDrawAgain} size="lg" variant="outline" className="gap-2">
-                    <RotateCcw className="w-4 h-4" /> 重新抽取
+                <div className="flex items-center justify-center gap-2 max-w-md mx-auto">
+                  <p className="font-hand text-2xl text-primary italic">
+                    {questions[questionIndex]}
+                  </p>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={handleNextQuestion}
+                    className="h-8 w-8 text-primary/60 hover:text-primary transition-colors"
+                  >
+                    <RotateCcw className="w-4 h-4" />
                   </Button>
                 </div>
               </motion.div>
