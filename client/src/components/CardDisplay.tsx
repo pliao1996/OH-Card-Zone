@@ -26,7 +26,7 @@ export function CardDisplay({
   };
 
   const isWord = card.type === 'word';
-  const isImageContent = typeof card.content === 'string' && card.content.match(/\.(jpg|jpeg|png|webp|gif)$/i);
+  const isImageContent = typeof card.content === 'string' && (card.content.match(/\.(jpg|jpeg|png|webp|gif)$/i) || card.content.includes('_'));
 
   return (
     <div 
@@ -48,7 +48,7 @@ export function CardDisplay({
           isWord && !isImageContent ? "p-6" : "p-0"
         )}>
           {isWord && !isImageContent ? (
-            <div className="text-center">
+            <div className="text-center w-full h-full flex flex-col items-center justify-center">
                {/* Word cards often have a smaller word inside a frame or just text */}
                <div className="border-2 border-primary/10 rounded-lg p-4 w-full h-full flex items-center justify-center">
                  <span className="font-display font-bold text-2xl text-primary tracking-wider uppercase">
@@ -60,10 +60,10 @@ export function CardDisplay({
                </span>
             </div>
           ) : (
-            <div className="w-full h-full relative bg-gray-100">
+            <div className="w-full h-full relative bg-gray-50 flex items-center justify-center">
               {/* Dynamic image path handling */}
               <img 
-                src={card.content.startsWith('http') ? card.content : `/attached_assets/${card.content}`} 
+                src={card.content.startsWith('http') ? card.content : `@assets/${card.content}`} 
                 alt={card.title}
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -72,7 +72,7 @@ export function CardDisplay({
                   if (target.parentElement) {
                     target.style.display = 'none';
                     target.parentElement.classList.add('flex', 'items-center', 'justify-center', 'bg-secondary/50');
-                    target.parentElement.innerHTML = `<span class="text-muted-foreground font-display text-lg">图卡 #${card.number}</span>`;
+                    target.parentElement.innerHTML = `<span class="text-muted-foreground font-display text-sm">图卡 #${card.number}</span>`;
                   }
                 }}
               />
@@ -128,7 +128,7 @@ export function PairDisplay({
           {/* Base: Image Card */}
           <div className="absolute inset-4 top-4 bottom-24 rounded-lg overflow-hidden shadow-inner border border-border/20">
              <img 
-                src={imageCard.content.startsWith('http') ? imageCard.content : `/attached_assets/${imageCard.content}`} 
+                src={imageCard.content.startsWith('http') ? imageCard.content : `@assets/${imageCard.content}`} 
                 alt={imageCard.title}
                 className="w-full h-full object-cover"
               />
@@ -136,9 +136,9 @@ export function PairDisplay({
           
           {/* Overlay: Word Card (at the bottom/surrounding) */}
           <div className="absolute inset-0 pointer-events-none">
-            {wordCard.content.match(/\.(jpg|jpeg|png|webp|gif)$/i) ? (
+            {wordCard.content.match(/\.(jpg|jpeg|png|webp|gif)$/i) || wordCard.content.includes('_') ? (
               <img 
-                src={`/attached_assets/${wordCard.content}`}
+                src={`@assets/${wordCard.content}`}
                 alt={wordCard.title}
                 className="w-full h-full object-contain"
               />
