@@ -242,14 +242,23 @@ function ActiveSpread({
                 className="space-y-6"
               >
                 <div className="flex items-center justify-center gap-2 max-w-md mx-auto">
-                  <p className="font-hand text-2xl text-primary italic">
-                    {questions[questionIndex]}
-                  </p>
+                  <AnimatePresence mode="wait">
+                    <motion.p 
+                      key={questionIndex}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.5 }}
+                      className="font-hand text-2xl text-primary italic"
+                    >
+                      {questions[questionIndex]}
+                    </motion.p>
+                  </AnimatePresence>
                   <Button 
                     variant="ghost" 
                     size="icon" 
                     onClick={handleNextQuestion}
-                    className="h-8 w-8 text-primary/60 hover:text-primary transition-colors"
+                    className="h-8 w-8 text-primary/60 hover:text-primary transition-colors shrink-0"
                   >
                     <RotateCcw className="w-4 h-4" />
                   </Button>
