@@ -57,6 +57,13 @@ function SpreadSelection({ onSelect }: { onSelect: (mode: 'image' | 'word' | 'pa
       desc: '六步克服卡玩法，从困境到成长，探索内在的转变之旅。',
       bg: 'bg-amber-50/50 hover:bg-amber-100/50 border-amber-100 shadow-sm hover:shadow-md',
       tags: ['6张以上', '抽卡']
+    },
+    {
+      id: 'hero-journey-full',
+      title: '英雄之旅（完整版）',
+      desc: '十步叙事牌阵，完整构建英雄成长史诗。',
+      bg: 'bg-orange-50/50 hover:bg-orange-100/50 border-orange-100 shadow-md hover:shadow-lg',
+      tags: ['6张以上', '抽卡']
     }
   ];
 
@@ -199,6 +206,9 @@ function ActiveSpread({
     } else if (mode === 'hero-journey') {
       // Need 6 cards
       draw({ mode: 'image', count: 6 } as any);
+    } else if (mode === 'hero-journey-full') {
+      // Need 10 cards
+      draw({ mode: 'image', count: 10 } as any);
     } else if (mode === 'pair') {
       // Pair mode needs both image and word
       draw({ mode: 'pair' } as any);
@@ -215,8 +225,8 @@ function ActiveSpread({
     // before triggering the draw mutation which would update 'data'
     setTimeout(() => {
       draw({ 
-        mode: (mode === 'past-present-future' || mode === 'story' || mode === 'hero-journey' ? 'image' : mode) as any, 
-        count: mode === 'hero-journey' ? 6 : (mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1))
+        mode: (mode === 'past-present-future' || mode === 'story' || mode.startsWith('hero-journey') ? 'image' : mode) as any, 
+        count: mode === 'hero-journey-full' ? 10 : (mode === 'hero-journey' ? 6 : (mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1)))
       });
     }, 400); 
   };
