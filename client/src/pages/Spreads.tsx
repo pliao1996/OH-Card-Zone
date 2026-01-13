@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Layout } from "@/components/ui/Layout";
 import { useDrawCards } from "@/hooks/use-cards";
@@ -87,6 +87,27 @@ function ActiveSpread({
   const { mutate: draw, data, isPending, reset } = useDrawCards();
   const [revealed, setRevealed] = useState<Record<number, boolean>>({});
   const [questionIndex, setQuestionIndex] = useState(0);
+  const [currentCards, setCurrentCards] = useState<Card[]>([]);
+
+  // Update currentCards only when data changes AND we are NOT in the middle of a flip-back
+  useState(() => {
+    if (data?.cards) {
+      // If we are showing back, don't update currentCards yet
+      // This is the key: we hold onto the OLD cards until the user flips again
+      if (Object.values(revealed).some(v => v)) {
+        setCurrentCards(data.cards);
+      }
+    }
+  });
+
+  // Synchronize currentCards when data arrives and cards are hidden
+  useEffect(() => {
+    if (data?.cards && Object.values(revealed).every(v => !v)) {
+      // If all are hidden, we can safely pre-load the new data
+      // but the UI only shows what's in currentCards when flipped
+      setCurrentCards(data.cards);
+    }
+  }, [data, revealed]);
 
   const questions = [
     "“这触动了你内心深处的什么？”",
@@ -113,32 +134,26 @@ function ActiveSpread({
     }
   });
 
-  const [isFlipping, setIsFlipping] = useState(false);
-
   const handleDrawAgain = () => {
-    // 1. First, set revealed to false (flip to back)
     setRevealed({});
-    setIsFlipping(true);
-    
-    // 2. Start fetching next cards in the background
-    // We don't reset the data yet, so the old cards stay visible on the back
+    // Fetch new cards immediately
     draw({ mode: (mode === 'past-present-future' ? 'image' : mode) as any, count: mode === 'past-present-future' ? 3 : 1 });
   };
 
   const toggleReveal = (index: number) => {
-    // Only reveal if we have data
-    if (data && !isPending) {
+    if (data?.cards) {
+      // Swapping happens HERE, exactly when user clicks to reveal
+      setCurrentCards(data.cards);
       setRevealed(prev => ({ ...prev, [index]: true }));
-      setIsFlipping(false);
     }
   };
 
-  const hasData = data && data.cards && data.cards.length >= (mode === 'past-present-future' ? 3 : 1);
+  const hasData = currentCards.length >= (mode === 'past-present-future' ? 3 : 1);
   
   // Prepare cards based on mode
   let displayContent;
   
-  if (isPending || !hasData) {
+  if (isPending && currentCards.length === 0) {
     displayContent = (
       <div className="flex flex-col items-center justify-center h-96 w-full">
         <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
@@ -146,8 +161,8 @@ function ActiveSpread({
       </div>
     );
   } else if (mode === 'pair') {
-    const img = data.cards.find(c => c.type === 'image');
-    const word = data.cards.find(c => c.type === 'word');
+    const img = currentCards.find(c => c.type === 'image');
+    const word = currentCards.find(c => c.type === 'word');
 
     if (img && word) {
       displayContent = (
@@ -163,7 +178,7 @@ function ActiveSpread({
     }
   } else if (mode === 'past-present-future') {
     const labels = ['过去', '现在', '未来'];
-    const cards = data.cards.slice(0, 3);
+    const cards = currentCards.slice(0, 3);
     displayContent = (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full py-8">
         {cards.map((card, idx) => (
@@ -180,17 +195,19 @@ function ActiveSpread({
       </div>
     );
   } else {
-    const card = data.cards[0];
-    displayContent = (
-      <div className="flex justify-center items-center py-12">
-        <CardDisplay 
-          card={card} 
-          size="lg" 
-          isRevealed={revealed[0] || false} 
-          onClick={() => toggleReveal(0)} 
-        />
-      </div>
-    );
+    const card = currentCards[0];
+    if (card) {
+      displayContent = (
+        <div className="flex justify-center items-center py-12">
+          <CardDisplay 
+            card={card} 
+            size="lg" 
+            isRevealed={revealed[0] || false} 
+            onClick={() => toggleReveal(0)} 
+          />
+        </div>
+      );
+    }
   }
 
   const allRevealed = mode === 'past-present-future' 
