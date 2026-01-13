@@ -160,7 +160,7 @@ function ActiveSpread({
   // Prepare cards based on mode
   let displayContent;
   
-  if (isPending && currentCards.length === 0) {
+  if (currentCards.length === 0) {
     displayContent = (
       <div className="flex flex-col items-center justify-center h-96 w-full">
         <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
@@ -245,18 +245,9 @@ function ActiveSpread({
       </div>
 
       <div className="min-h-[500px] flex flex-col items-center justify-center bg-secondary/10 rounded-3xl border-2 border-dashed border-border p-8 relative overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={isPending ? 'loading' : 'content'}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
-            className="w-full"
-          >
-            {displayContent}
-          </motion.div>
-        </AnimatePresence>
+        <div className="w-full">
+          {displayContent}
+        </div>
         
         {!isPending && hasData && (
           <div className="mt-8 text-center space-y-2">
