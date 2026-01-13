@@ -114,7 +114,9 @@ function ActiveSpread({
   });
 
   const handleDrawAgain = () => {
+    // Show back first
     setRevealed({});
+    // Small delay to let the flip animation start/finish
     setTimeout(() => {
       reset();
       if (mode === 'past-present-future') {
@@ -122,7 +124,7 @@ function ActiveSpread({
       } else {
         draw({ mode: mode as any });
       }
-    }, 300);
+    }, 150); // Faster reset
   };
 
   const toggleReveal = (index: number) => {
