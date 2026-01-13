@@ -50,6 +50,13 @@ function SpreadSelection({ onSelect }: { onSelect: (mode: 'image' | 'word' | 'pa
       desc: '随机抽取五张牌，编织一段奇妙的叙事旅程。',
       bg: 'bg-rose-50/50 hover:bg-rose-100/50 border-rose-100 shadow-sm hover:shadow-md',
       tags: ['3-5张', '抽卡']
+    },
+    {
+      id: 'hero-journey',
+      title: '英雄之旅（抽卡）',
+      desc: '六步克服卡玩法，从困境到成长，探索内在的转变之旅。',
+      bg: 'bg-amber-50/50 hover:bg-amber-100/50 border-amber-100 shadow-sm hover:shadow-md',
+      tags: ['6张以上', '抽卡']
     }
   ];
 
@@ -161,7 +168,15 @@ function ActiveSpread({
     }
   }, [data, revealed]);
 
-  const questions = mode === 'story' ? ["“这是一个什么样的故事？”"] : [
+  const questions = mode === 'story' ? ["“这是一个什么样的故事？”"] : 
+    mode === 'hero-journey' ? [
+      "困境卡：明确英雄的起点，即当下的核心困境。",
+      "根源卡：探索困境背后的内在阻碍。",
+      "资源卡：寻找可调用的内在或外在资源。",
+      "行动卡：找到突破困境的关键行动。",
+      "成长卡：预见突破困境后英雄的状态。",
+      "守护卡：确定应对践行过程中可能出现阻碍的方法。"
+    ] : [
     "“这触动了你内心深处的什么？”",
     "“这张卡片让你想到了生活中的哪个人或哪件事？”",
     "“如果这张卡片会说话，它会对你说什么？”",
@@ -181,6 +196,9 @@ function ActiveSpread({
     } else if (mode === 'story') {
       // Need 5 cards
       draw({ mode: 'image', count: 5 } as any);
+    } else if (mode === 'hero-journey') {
+      // Need 6 cards
+      draw({ mode: 'image', count: 6 } as any);
     } else if (mode === 'pair') {
       // Pair mode needs both image and word
       draw({ mode: 'pair' } as any);
@@ -197,8 +215,8 @@ function ActiveSpread({
     // before triggering the draw mutation which would update 'data'
     setTimeout(() => {
       draw({ 
-        mode: (mode === 'past-present-future' || mode === 'story' ? 'image' : mode) as any, 
-        count: mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1)
+        mode: (mode === 'past-present-future' || mode === 'story' || mode === 'hero-journey' ? 'image' : mode) as any, 
+        count: mode === 'hero-journey' ? 6 : (mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1))
       });
     }, 400); 
   };
@@ -211,7 +229,7 @@ function ActiveSpread({
     }
   };
 
-  const hasData = currentCards.length >= (mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1));
+  const hasData = currentCards.length >= (mode === 'hero-journey' ? 6 : (mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1)));
   
   // Prepare cards based on mode
   let displayContent;
@@ -239,14 +257,16 @@ function ActiveSpread({
          </div>
       );
     }
-  } else if (mode === 'past-present-future' || mode === 'story') {
-    const labels = mode === 'past-present-future' ? ['过去', '现在', '未来'] : ['一', '二', '三', '四', '五'];
-    const count = mode === 'story' ? 5 : 3;
+  } else if (mode === 'past-present-future' || mode === 'story' || mode === 'hero-journey') {
+    const labels = mode === 'past-present-future' ? ['过去', '现在', '未来'] : 
+                  mode === 'story' ? ['一', '二', '三', '四', '五'] :
+                  ['困境卡', '根源卡', '资源卡', '行动卡', '成长卡', '守护卡'];
+    const count = mode === 'hero-journey' ? 6 : (mode === 'story' ? 5 : 3);
     const cards = currentCards.slice(0, count);
     displayContent = (
       <div className={cn(
         "grid gap-6 w-full py-8",
-        mode === 'story' ? "grid-cols-2 md:grid-cols-5" : "grid-cols-1 md:grid-cols-3"
+        mode === 'hero-journey' ? "grid-cols-2 md:grid-cols-3" : (mode === 'story' ? "grid-cols-2 md:grid-cols-5" : "grid-cols-1 md:grid-cols-3")
       )}>
         {cards.map((card, idx) => (
           <div key={idx} className="flex flex-col items-center space-y-4">
@@ -281,6 +301,8 @@ function ActiveSpread({
     ? (revealed[0] && revealed[1] && revealed[2])
     : mode === 'story'
     ? (revealed[0] && revealed[1] && revealed[2] && revealed[3] && revealed[4])
+    : mode === 'hero-journey'
+    ? (revealed[0] && revealed[1] && revealed[2] && revealed[3] && revealed[4] && revealed[5])
     : revealed[0];
 
   return (
@@ -295,6 +317,7 @@ function ActiveSpread({
             {mode === 'pair' ? 'OH 经典组合' : 
              mode === 'past-present-future' ? '时间轴牌阵 (过去/现在/未来)' :
              mode === 'story' ? '故事接龙' :
+             mode === 'hero-journey' ? '英雄之旅（抽卡）' :
              `单张${mode === 'image' ? '图卡' : '字卡'}牌阵`}
           </h2>
         </div>
