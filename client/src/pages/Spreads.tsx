@@ -103,8 +103,7 @@ function ActiveSpread({
   // Synchronize currentCards when data arrives and cards are hidden
   useEffect(() => {
     if (data?.cards && Object.values(revealed).every(v => !v)) {
-      // If all are hidden, we can safely pre-load the new data
-      // but the UI only shows what's in currentCards when flipped
+      // If all are hidden, we can safely update the visible data
       setCurrentCards(data.cards);
     }
   }, [data, revealed]);
@@ -135,9 +134,17 @@ function ActiveSpread({
   });
 
   const handleDrawAgain = () => {
+    // 1. Immediately flip to back
     setRevealed({});
-    // Fetch new cards immediately
-    draw({ mode: (mode === 'past-present-future' ? 'image' : mode) as any, count: mode === 'past-present-future' ? 3 : 1 });
+    
+    // 2. Wait for flip animation to complete (approx 300-400ms) 
+    // before triggering the draw mutation which would update 'data'
+    setTimeout(() => {
+      draw({ 
+        mode: (mode === 'past-present-future' ? 'image' : mode) as any, 
+        count: mode === 'past-present-future' ? 3 : 1 
+      });
+    }, 400); 
   };
 
   const toggleReveal = (index: number) => {
