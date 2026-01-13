@@ -113,19 +113,23 @@ function ActiveSpread({
     }
   });
 
-  const [nextData, setNextData] = useState<any>(null);
+  const [isFlipping, setIsFlipping] = useState(false);
 
   const handleDrawAgain = () => {
     // 1. First, set revealed to false (flip to back)
     setRevealed({});
+    setIsFlipping(true);
+    
     // 2. Start fetching next cards in the background
+    // We don't reset the data yet, so the old cards stay visible on the back
     draw({ mode: (mode === 'past-present-future' ? 'image' : mode) as any, count: mode === 'past-present-future' ? 3 : 1 });
   };
 
   const toggleReveal = (index: number) => {
     // Only reveal if we have data
-    if (data) {
+    if (data && !isPending) {
       setRevealed(prev => ({ ...prev, [index]: true }));
+      setIsFlipping(false);
     }
   };
 
