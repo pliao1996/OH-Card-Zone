@@ -113,22 +113,20 @@ function ActiveSpread({
     }
   });
 
+  const [nextData, setNextData] = useState<any>(null);
+
   const handleDrawAgain = () => {
-    // Show back first
+    // 1. First, set revealed to false (flip to back)
     setRevealed({});
-    // Small delay to let the flip animation start/finish
-    setTimeout(() => {
-      reset();
-      if (mode === 'past-present-future') {
-        draw({ mode: 'image', count: 3 } as any);
-      } else {
-        draw({ mode: mode as any });
-      }
-    }, 150); // Faster reset
+    // 2. Start fetching next cards in the background
+    draw({ mode: (mode === 'past-present-future' ? 'image' : mode) as any, count: mode === 'past-present-future' ? 3 : 1 });
   };
 
   const toggleReveal = (index: number) => {
-    setRevealed(prev => ({ ...prev, [index]: true }));
+    // Only reveal if we have data
+    if (data) {
+      setRevealed(prev => ({ ...prev, [index]: true }));
+    }
   };
 
   const hasData = data && data.cards && data.cards.length >= (mode === 'past-present-future' ? 3 : 1);
