@@ -36,6 +36,12 @@ function SpreadSelection({ onSelect }: { onSelect: (mode: 'image' | 'word' | 'pa
       title: '时间轴牌阵',
       desc: '抽取三张卡片，分别代表过去、现在和未来。',
       bg: 'bg-teal-50/50 hover:bg-teal-100/50 border-teal-100 shadow-sm hover:shadow-md'
+    },
+    {
+      id: 'story',
+      title: '故事接龙',
+      desc: '随机抽取五张牌，编织一段奇妙的叙事旅程。',
+      bg: 'bg-rose-50/50 hover:bg-rose-100/50 border-rose-100 shadow-sm hover:shadow-md'
     }
   ];
 
@@ -108,7 +114,7 @@ function ActiveSpread({
     }
   }, [data, revealed]);
 
-  const questions = [
+  const questions = mode === 'story' ? ["“这是一个什么样的故事？”"] : [
     "“这触动了你内心深处的什么？”",
     "“这张卡片让你想到了生活中的哪个人或哪件事？”",
     "“如果这张卡片会说话，它会对你说什么？”",
@@ -125,6 +131,9 @@ function ActiveSpread({
     if (mode === 'past-present-future') {
       // Need 3 cards
       draw({ mode: 'image', count: 3 } as any);
+    } else if (mode === 'story') {
+      // Need 5 cards
+      draw({ mode: 'image', count: 5 } as any);
     } else if (mode === 'pair') {
       // Pair mode needs both image and word
       draw({ mode: 'pair' } as any);
@@ -141,8 +150,8 @@ function ActiveSpread({
     // before triggering the draw mutation which would update 'data'
     setTimeout(() => {
       draw({ 
-        mode: (mode === 'past-present-future' ? 'image' : mode) as any, 
-        count: mode === 'past-present-future' ? 3 : 1 
+        mode: (mode === 'past-present-future' || mode === 'story' ? 'image' : mode) as any, 
+        count: mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1)
       });
     }, 400); 
   };
@@ -155,7 +164,7 @@ function ActiveSpread({
     }
   };
 
-  const hasData = currentCards.length >= (mode === 'past-present-future' ? 3 : 1);
+  const hasData = currentCards.length >= (mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1));
   
   // Prepare cards based on mode
   let displayContent;
@@ -183,11 +192,15 @@ function ActiveSpread({
          </div>
       );
     }
-  } else if (mode === 'past-present-future') {
-    const labels = ['过去', '现在', '未来'];
-    const cards = currentCards.slice(0, 3);
+  } else if (mode === 'past-present-future' || mode === 'story') {
+    const labels = mode === 'past-present-future' ? ['过去', '现在', '未来'] : ['一', '二', '三', '四', '五'];
+    const count = mode === 'story' ? 5 : 3;
+    const cards = currentCards.slice(0, count);
     displayContent = (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full py-8">
+      <div className={cn(
+        "grid gap-6 w-full py-8",
+        mode === 'story' ? "grid-cols-2 md:grid-cols-5" : "grid-cols-1 md:grid-cols-3"
+      )}>
         {cards.map((card, idx) => (
           <div key={idx} className="flex flex-col items-center space-y-4">
             <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{labels[idx]}</span>
@@ -219,6 +232,8 @@ function ActiveSpread({
 
   const allRevealed = mode === 'past-present-future' 
     ? (revealed[0] && revealed[1] && revealed[2])
+    : mode === 'story'
+    ? (revealed[0] && revealed[1] && revealed[2] && revealed[3] && revealed[4])
     : revealed[0];
 
   return (
@@ -232,6 +247,7 @@ function ActiveSpread({
           <h2 className="text-2xl font-display font-bold">
             {mode === 'pair' ? 'OH 经典组合' : 
              mode === 'past-present-future' ? '时间轴牌阵 (过去/现在/未来)' :
+             mode === 'story' ? '故事接龙' :
              `单张${mode === 'image' ? '图卡' : '字卡'}牌阵`}
           </h2>
         </div>
