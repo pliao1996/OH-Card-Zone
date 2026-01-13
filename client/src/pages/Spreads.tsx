@@ -79,20 +79,14 @@ function SpreadSelection({ onSelect }: { onSelect: (mode: 'image' | 'word' | 'pa
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col items-center gap-3">
-          <div className="flex flex-wrap justify-center gap-2">
-            <span className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-widest mr-2 self-center">数量:</span>
-            <FilterButton label="全部" active={activeCountFilter === null} onClick={() => setActiveCountFilter(null)} />
-            <FilterButton label="1-2张" active={activeCountFilter === '1-2张'} onClick={() => setActiveCountFilter('1-2张')} />
-            <FilterButton label="3-5张" active={activeCountFilter === '3-5张'} onClick={() => setActiveCountFilter('3-5张')} />
-            <FilterButton label="6张以上" active={activeCountFilter === '6张以上'} onClick={() => setActiveCountFilter('6张以上')} />
-          </div>
-          <div className="flex flex-wrap justify-center gap-2">
-            <span className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-widest mr-2 self-center">类型:</span>
-            <FilterButton label="全部" active={activeTypeFilter === null} onClick={() => setActiveTypeFilter(null)} />
-            <FilterButton label="抽牌" active={activeTypeFilter === '抽卡'} onClick={() => setActiveTypeFilter('抽卡')} />
-            <FilterButton label="选牌" active={activeTypeFilter === '选卡'} onClick={() => setActiveTypeFilter('选卡')} />
-          </div>
+        <div className="flex flex-wrap justify-center gap-2">
+          <FilterButton label="全部" active={activeCountFilter === null && activeTypeFilter === null} onClick={() => { setActiveCountFilter(null); setActiveTypeFilter(null); }} />
+          <div className="w-px h-4 bg-border/60 self-center mx-1 hidden sm:block" />
+          <FilterButton label="1-2张" active={activeCountFilter === '1-2张'} onClick={() => setActiveCountFilter(activeCountFilter === '1-2张' ? null : '1-2张')} />
+          <FilterButton label="3-5张" active={activeCountFilter === '3-5张'} onClick={() => setActiveCountFilter(activeCountFilter === '3-5张' ? null : '3-5张')} />
+          <div className="w-px h-4 bg-border/60 self-center mx-1 hidden sm:block" />
+          <FilterButton label="抽牌" active={activeTypeFilter === '抽卡'} onClick={() => setActiveTypeFilter(activeTypeFilter === '抽卡' ? null : '抽卡')} />
+          <FilterButton label="选牌" active={activeTypeFilter === '选卡'} onClick={() => setActiveTypeFilter(activeTypeFilter === '选卡' ? null : '选卡')} />
         </div>
       </div>
 
