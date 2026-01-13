@@ -144,9 +144,9 @@ export function PairDisplay({
 
           {/* Overlay: Image Card (The picture inside the frame) */}
           {/* Based on typical OH cards, the red frame is roughly 70-80% of the word card width/height */}
-          {/* Increased padding by ~8px (approx 3% of 288px width is 8.6px) */}
-          {/* Adjusted to center within red frame: pt 16.5% (~47.5px), pb 17% (~49px) */}
-          <div className="absolute inset-0 flex items-center justify-center z-10 p-[15%] pt-[16.5%] pb-[17%]">
+          {/* Fine-tuned positioning: Left -1px, Right +2px, Bottom +2px */}
+          {/* Padding adjusted to: pl 14.5% (-1px approx), pr 14% (+2px approx), pt 16.5%, pb 16% (-2px shift) */}
+          <div className="absolute inset-0 flex items-center justify-center z-10 pl-[14.5%] pr-[14%] pt-[16.5%] pb-[16%]">
              <div className="w-full h-full rounded-sm overflow-hidden shadow-inner border border-border/10">
                <img 
                   src={imageCard.content.startsWith('http') ? imageCard.content : `/images/${imageCard.content}`} 
