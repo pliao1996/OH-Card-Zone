@@ -256,6 +256,15 @@ function ActiveSpread({
   // Prepare cards based on mode
   let displayContent;
   
+  const journeyQuestions = [
+    "明确英雄的起点，即当下的核心困境。",
+    "探索困境背后的内在阻碍。",
+    "寻找可调用的内在或外在资源。",
+    "找到突破困境的关键行动。",
+    "预见突破困境后英雄的状态。",
+    "确定应对践行过程中可能出现阻碍的方法。"
+  ];
+
   if (currentCards.length === 0) {
     displayContent = (
       <div className="flex flex-col items-center justify-center h-96 w-full">
