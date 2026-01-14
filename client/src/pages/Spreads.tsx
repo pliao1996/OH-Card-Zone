@@ -176,6 +176,18 @@ function ActiveSpread({
   }, [data, revealed]);
 
   const questions = mode === 'story' ? ["“这是一个什么样的故事？”"] : 
+    mode === 'hero-journey-full' ? [
+      "英雄：谁是这个故事的主角？",
+      "地点：故事在哪里拉开序幕？",
+      "技能：英雄拥有怎样的特殊能力？",
+      "使命：英雄必须完成什么任务？",
+      "宝物：英雄在途中得到了什么助力？",
+      "魔王：谁是故事中的反派或阻碍？",
+      "魔王技能：魔王有什么可怕的力量？",
+      "战斗：正邪之战是如何展开的？",
+      "结果：战斗最终谁胜谁负？",
+      "回首：回到平凡生活后，你如何看待这段往事？"
+    ] :
     mode === 'hero-journey' ? [
       "困境卡：明确英雄的起点，即当下的核心困境。",
       "根源卡：探索困境背后的内在阻碍。",
@@ -239,7 +251,7 @@ function ActiveSpread({
     }
   };
 
-  const hasData = currentCards.length >= (mode === 'hero-journey' ? 6 : (mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1)));
+  const hasData = currentCards.length >= (mode === 'hero-journey-full' ? 10 : (mode === 'hero-journey' ? 6 : (mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1))));
   
   // Prepare cards based on mode
   let displayContent;
@@ -267,46 +279,45 @@ function ActiveSpread({
          </div>
       );
     }
-  } else if (mode === 'past-present-future' || mode === 'story' || mode === 'hero-journey') {
-  const journeyQuestions = [
-    "明确英雄的起点，即当下的核心困境。",
-    "探索困境背后的内在阻碍。",
-    "寻找可调用的内在或外在资源。",
-    "找到突破困境的关键行动。",
-    "预见突破困境后英雄的状态。",
-    "确定应对践行过程中可能出现阻碍的方法。"
-  ];
-
-  const labels = mode === 'past-present-future' ? ['过去', '现在', '未来'] : 
-                mode === 'story' ? ['一', '二', '三', '四', '五'] :
-                ['困境卡', '根源卡', '资源卡', '行动卡', '成长卡', '守护卡'];
-  const count = mode === 'hero-journey' ? 6 : (mode === 'story' ? 5 : 3);
-  const cards = currentCards.slice(0, count);
-  displayContent = (
-    <div className={cn(
-      "grid gap-6 w-full py-8",
-      mode === 'hero-journey' ? "grid-cols-2 md:grid-cols-3" : (mode === 'story' ? "grid-cols-2 md:grid-cols-5" : "grid-cols-1 md:grid-cols-3")
-    )}>
-      {cards.map((card, idx) => (
-        <div key={idx} className="flex flex-col items-center space-y-3">
-          <div className="text-center space-y-1">
-            <span className="text-sm font-bold text-primary uppercase tracking-widest">{labels[idx]}</span>
-            {mode === 'hero-journey' && (
-              <p className="text-[10px] leading-tight text-muted-foreground max-w-[120px] mx-auto opacity-80">
-                {journeyQuestions[idx]}
-              </p>
-            )}
+  } else if (mode === 'past-present-future' || mode === 'story' || mode.startsWith('hero-journey')) {
+    const journeyFullLabels = ['英雄', '故事发生的地方', '英雄的技能', '英雄的使命', '英雄得到的宝物', '出现的魔王', '魔王的技能', '英雄与魔王的战斗', '战斗的结果', '回到平凡回首往事'];
+    
+    const labels = mode === 'past-present-future' ? ['过去', '现在', '未来'] : 
+                  mode === 'story' ? ['一', '二', '三', '四', '五'] :
+                  mode === 'hero-journey' ? ['困境卡', '根源卡', '资源卡', '行动卡', '成长卡', '守护卡'] :
+                  journeyFullLabels;
+    
+    const count = mode === 'hero-journey-full' ? 10 : (mode === 'hero-journey' ? 6 : (mode === 'story' ? 5 : 3));
+    const cards = currentCards.slice(0, count);
+    displayContent = (
+      <div className={cn(
+        "grid gap-6 w-full py-8",
+        mode === 'hero-journey-full' ? "grid-cols-2 md:grid-cols-5" : 
+        (mode === 'hero-journey' ? "grid-cols-2 md:grid-cols-3" : 
+        (mode === 'story' ? "grid-cols-2 md:grid-cols-5" : "grid-cols-1 md:grid-cols-3"))
+      )}>
+        {cards.map((card, idx) => (
+          <div key={idx} className="flex flex-col items-center space-y-3">
+            <div className="text-center space-y-1">
+              <span className="text-sm font-bold text-primary uppercase tracking-widest">
+                {labels[idx]}
+              </span>
+              {mode === 'hero-journey' && (
+                <p className="text-[10px] leading-tight text-muted-foreground max-w-[120px] mx-auto opacity-80">
+                  {journeyQuestions[idx]}
+                </p>
+              )}
+            </div>
+            <CardDisplay 
+              card={card} 
+              size="sm" 
+              isRevealed={revealed[idx] || false} 
+              onClick={() => toggleReveal(idx)} 
+            />
           </div>
-          <CardDisplay 
-            card={card} 
-            size="sm" 
-            isRevealed={revealed[idx] || false} 
-            onClick={() => toggleReveal(idx)} 
-          />
-        </div>
-      ))}
-    </div>
-  );
+        ))}
+      </div>
+    );
   } else {
     const card = currentCards[0];
     if (card) {
@@ -329,6 +340,8 @@ function ActiveSpread({
     ? (revealed[0] && revealed[1] && revealed[2] && revealed[3] && revealed[4])
     : mode === 'hero-journey'
     ? (revealed[0] && revealed[1] && revealed[2] && revealed[3] && revealed[4] && revealed[5])
+    : mode === 'hero-journey-full'
+    ? (revealed[0] && revealed[1] && revealed[2] && revealed[3] && revealed[4] && revealed[5] && revealed[6] && revealed[7] && revealed[8] && revealed[9])
     : revealed[0];
 
   return (
@@ -344,6 +357,7 @@ function ActiveSpread({
              mode === 'past-present-future' ? '时间轴牌阵 (过去/现在/未来)' :
              mode === 'story' ? '故事接龙' :
              mode === 'hero-journey' ? '英雄之旅（抽卡）' :
+             mode === 'hero-journey-full' ? '英雄之旅（完整版）' :
              `单张${mode === 'image' ? '图卡' : '字卡'}牌阵`}
           </h2>
         </div>
