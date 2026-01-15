@@ -89,7 +89,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       <footer className="border-t border-border/50 py-8 mt-auto bg-secondary/30">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p className="mb-2">仅供学习使用，如有版权问题，请联系作者 liaopei1996@outlook.com</p>
+          <p className="mb-2">仅供学习使用，如有版权问题，请联系作者 yuanzideshi@outlook.com</p>
           <p>&copy; {new Date().getFullYear()} OH Cards Experience. All rights reserved.</p>
         </div>
       </footer>
