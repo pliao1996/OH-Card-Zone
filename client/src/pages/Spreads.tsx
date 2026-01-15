@@ -5,7 +5,9 @@ import { useDrawCards } from "@/hooks/use-cards";
 import { CardDisplay, PairDisplay } from "@/components/CardDisplay";
 import { Button } from "@/components/ui/button";
 import { type Card } from "@shared/schema";
-import { Loader2, RotateCcw, ArrowLeft } from "lucide-react";
+import { ArrowLeft, RotateCcw, Loader2 } from "lucide-react";
+import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
+import { Slider } from "@/components/ui/slider";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -63,6 +65,13 @@ function SpreadSelection({ onSelect }: { onSelect: (mode: 'image' | 'word' | 'pa
       title: '英雄之旅（完整版）',
       desc: '十步叙事牌阵，完整构建英雄成长史诗。',
       bg: 'bg-orange-50/50 hover:bg-orange-100/50 border-orange-100 shadow-md hover:shadow-lg',
+      tags: ['6张以上', '抽卡']
+    },
+    {
+      id: 'balance-wheel',
+      title: '生命平衡轮',
+      desc: '探索身、心、灵、家、事、社的平衡，绘制你的生命雷达图。',
+      bg: 'bg-indigo-50/50 hover:bg-indigo-100/50 border-indigo-100 shadow-sm hover:shadow-md',
       tags: ['6张以上', '抽卡']
     }
   ];
@@ -175,7 +184,17 @@ function ActiveSpread({
     }
   }, [data, revealed]);
 
+  const [scores, setScores] = useState<number[]>([5, 5, 5, 5, 5, 5]);
+
   const questions = mode === 'story' ? ["“这是一个什么样的故事？”"] : 
+    mode === 'balance-wheel' ? [
+      "身：你现在的身体状态感觉如何？",
+      "心：你当下的情绪和心理状态是怎样的？",
+      "灵：你的内在精神世界或价值观目前处于什么状态？",
+      "家：你与家人的关系、家庭氛围如何？",
+      "事：你的事业、学业或目前专注的事情进展如何？",
+      "社：你的社交生活、人际关系或社会贡献如何？"
+    ] :
     mode === 'hero-journey-full' ? [
       "英雄：谁是这个故事的主角？",
       "地点：故事在哪里拉开序幕？",
@@ -221,6 +240,9 @@ function ActiveSpread({
     } else if (mode === 'hero-journey-full') {
       // Need 10 cards
       draw({ mode: 'image', count: 10 } as any);
+    } else if (mode === 'balance-wheel') {
+      // Need 6 cards
+      draw({ mode: 'image', count: 6 } as any);
     } else if (mode === 'pair') {
       // Pair mode needs both image and word
       draw({ mode: 'pair' } as any);
@@ -237,8 +259,8 @@ function ActiveSpread({
     // before triggering the draw mutation which would update 'data'
     setTimeout(() => {
       draw({ 
-        mode: (mode === 'past-present-future' || mode === 'story' || mode.startsWith('hero-journey') ? 'image' : mode) as any, 
-        count: mode === 'hero-journey-full' ? 10 : (mode === 'hero-journey' ? 6 : (mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1)))
+        mode: (mode === 'past-present-future' || mode === 'story' || mode.startsWith('hero-journey') || mode === 'balance-wheel' ? 'image' : mode) as any, 
+        count: mode === 'hero-journey-full' ? 10 : (mode === 'hero-journey' || mode === 'balance-wheel' ? 6 : (mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1)))
       });
     }, 400); 
   };
@@ -251,7 +273,7 @@ function ActiveSpread({
     }
   };
 
-  const hasData = currentCards.length >= (mode === 'hero-journey-full' ? 10 : (mode === 'hero-journey' ? 6 : (mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1))));
+  const hasData = currentCards.length >= (mode === 'hero-journey-full' ? 10 : (mode === 'hero-journey' || mode === 'balance-wheel' ? 6 : (mode === 'story' ? 5 : (mode === 'past-present-future' ? 3 : 1))));
   
   // Prepare cards based on mode
   let displayContent;
@@ -288,6 +310,91 @@ function ActiveSpread({
          </div>
       );
     }
+  } else if (mode === 'balance-wheel') {
+    const labels = ['身', '心', '灵', '家', '事', '社'];
+    const radarData = labels.map((label, i) => ({
+      subject: label,
+      A: scores[i],
+      fullMark: 10,
+    }));
+
+    displayContent = (
+      <div className="w-full py-8 flex flex-col items-center gap-12">
+        <div className="relative w-full max-w-[600px] aspect-square flex items-center justify-center">
+          {/* Radar Chart in Center */}
+          <div className="absolute inset-0 z-0 opacity-80 pointer-events-none">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart cx="50%" cy="50%" outerRadius="60%" data={radarData}>
+                <PolarGrid stroke="hsl(var(--primary) / 0.2)" />
+                <PolarAngleAxis dataKey="subject" tick={false} />
+                <Radar
+                  name="Balance"
+                  dataKey="A"
+                  stroke="hsl(var(--primary))"
+                  fill="hsl(var(--primary))"
+                  fillOpacity={0.4}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Cards in Circle */}
+          <div className="relative w-full h-full z-10">
+            {currentCards.slice(0, 6).map((card, idx) => {
+              const angle = (idx * 60 - 90) * (Math.PI / 180);
+              const radius = 38; // percentage
+              const x = 50 + radius * Math.cos(angle);
+              const y = 50 + radius * Math.sin(angle);
+
+              return (
+                <div
+                  key={idx}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2"
+                  style={{ left: `${x}%`, top: `${y}%` }}
+                >
+                  <div className="bg-background/80 backdrop-blur-sm px-2 py-0.5 rounded-full border border-primary/20 shadow-sm z-20">
+                    <span className="text-xs font-bold text-primary">{labels[idx]}</span>
+                  </div>
+                  <CardDisplay
+                    card={card}
+                    size="xs"
+                    isRevealed={revealed[idx] || false}
+                    onClick={() => toggleReveal(idx)}
+                  />
+                  {revealed[idx] && (
+                    <div className="w-24 mt-2 px-2 bg-background/60 backdrop-blur-sm rounded-lg py-1 border border-border/50">
+                      <Slider
+                        value={[scores[idx]]}
+                        max={10}
+                        step={1}
+                        onValueChange={([val]) => {
+                          const newScores = [...scores];
+                          newScores[idx] = val;
+                          setScores(newScores);
+                        }}
+                        className="w-full"
+                      />
+                      <div className="text-[10px] text-center mt-1 font-mono">{scores[idx]}</div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Active Question Tooltip */}
+        <div className="max-w-md w-full bg-primary/5 border border-primary/10 rounded-2xl p-4 text-center">
+           <div className="flex items-center justify-center gap-2 mb-2 text-primary">
+             <Info className="w-4 h-4" />
+             <span className="text-xs font-bold uppercase tracking-wider">当前探索：{labels[questionIndex % 6]}</span>
+           </div>
+           <p className="text-sm italic text-muted-foreground">
+             {questions[questionIndex % 6]}
+           </p>
+        </div>
+      </div>
+    );
   } else if (mode === 'past-present-future' || mode === 'story' || mode.startsWith('hero-journey')) {
     const journeyFullLabels = ['英雄', '故事发生的地方', '英雄的技能', '英雄的使命', '英雄得到的宝物', '出现的魔王', '魔王的技能', '英雄与魔王的战斗', '战斗的结果', '回到平凡回首往事'];
     
@@ -349,6 +456,8 @@ function ActiveSpread({
     ? (revealed[0] && revealed[1] && revealed[2] && revealed[3] && revealed[4])
     : mode === 'hero-journey'
     ? (revealed[0] && revealed[1] && revealed[2] && revealed[3] && revealed[4] && revealed[5])
+    : mode === 'balance-wheel'
+    ? (revealed[0] && revealed[1] && revealed[2] && revealed[3] && revealed[4] && revealed[5])
     : mode === 'hero-journey-full'
     ? (revealed[0] && revealed[1] && revealed[2] && revealed[3] && revealed[4] && revealed[5] && revealed[6] && revealed[7] && revealed[8] && revealed[9])
     : revealed[0];
@@ -367,6 +476,7 @@ function ActiveSpread({
              mode === 'story' ? '故事接龙' :
              mode === 'hero-journey' ? '英雄之旅（抽卡）' :
              mode === 'hero-journey-full' ? '英雄之旅（完整版）' :
+             mode === 'balance-wheel' ? '生命平衡轮' :
              `单张${mode === 'image' ? '图卡' : '字卡'}牌阵`}
           </h2>
         </div>
