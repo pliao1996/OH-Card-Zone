@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Gallery from "@/pages/Gallery";
 import Spreads from "@/pages/Spreads";
+import Sponsor from "@/pages/Sponsor";
 
 function Router() {
   return (
@@ -14,6 +15,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/gallery" component={Gallery} />
       <Route path="/spreads" component={Spreads} />
+      <Route path="/sponsor" component={Sponsor} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />

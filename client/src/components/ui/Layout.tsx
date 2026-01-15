@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Home, Grid, Layers, Menu, X } from "lucide-react";
+import { Home, Grid, Layers, Menu, X, Coffee } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./button";
 import { Sheet, SheetContent, SheetTrigger } from "./sheet";
@@ -14,6 +14,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { label: "首页", href: "/", icon: Home },
     { label: "卡片库", href: "/gallery", icon: Grid },
     { label: "牌阵", href: "/spreads", icon: Layers },
+    { label: "赞助", href: "/sponsor", icon: Coffee },
   ];
 
   return (
