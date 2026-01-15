@@ -470,27 +470,25 @@ function ActiveSpread({
 
     displayContent = (
       <div className="w-full py-8 flex flex-col items-center gap-8">
-        <div className="relative w-full max-w-[500px] aspect-square flex items-center justify-center">
+        <div className="relative w-full max-w-[450px] aspect-square flex items-center justify-center">
           {/* Radar Chart in Center */}
           <div className="absolute inset-0 z-0 opacity-80 pointer-events-auto">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart
                 cx="50%"
                 cy="50%"
-                outerRadius="50%"
+                outerRadius="40%"
                 data={radarData}
                 style={{ cursor: "pointer" }}
-                onMouseDown={(e: any) => {
+                onClick={(e: any) => {
                   if (e && e.activeCoordinate) {
                     const { x, y } = e.activeCoordinate;
                     const chart = e.chart;
                     if (!chart) return;
 
-                    // Use the coordinates directly from the event
-                    // Recharts provides these relative to the SVG container
-                    const cx = chart.cx || 250;
-                    const cy = chart.cy || 250;
-                    const outerRadius = chart.outerRadius || 125;
+                    const cx = chart.cx || 225;
+                    const cy = chart.cy || 225;
+                    const outerRadius = chart.outerRadius || 90;
 
                     const dx = x - cx;
                     const dy = y - cy;
@@ -499,7 +497,6 @@ function ActiveSpread({
                       Math.min(10, Math.max(0, (dist / outerRadius) * 10)),
                     );
 
-                    // Find which axis was clicked by calculating angle
                     let angle = Math.atan2(dy, dx) * (180 / Math.PI);
                     angle = (angle + 90 + 360) % 360;
                     const idx = Math.round((angle / 60) % 6);
@@ -534,7 +531,7 @@ function ActiveSpread({
                     r: 8, 
                     fill: "hsl(var(--primary))", 
                     cursor: "pointer",
-                    pointerEvents: "auto"
+                    pointerEvents: "all"
                   }}
                   isAnimationActive={false}
                 />
@@ -546,7 +543,7 @@ function ActiveSpread({
           <div className="relative w-full h-full z-10 pointer-events-none">
             {currentCards.slice(0, 6).map((card, idx) => {
               const angle = (idx * 60 - 90) * (Math.PI / 180);
-              const radius = 50; // Further out to avoid chart overlap
+              const radius = 45; 
               const x = 50 + radius * Math.cos(angle);
               const y = 50 + radius * Math.sin(angle);
 
