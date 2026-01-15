@@ -5,7 +5,7 @@ import { useDrawCards } from "@/hooks/use-cards";
 import { CardDisplay, PairDisplay } from "@/components/CardDisplay";
 import { Button } from "@/components/ui/button";
 import { type Card } from "@shared/schema";
-import { ArrowLeft, RotateCcw, Loader2 } from "lucide-react";
+import { ArrowLeft, RotateCcw, Loader2, Info } from "lucide-react";
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
 import { Slider } from "@/components/ui/slider";
 import { motion, AnimatePresence } from "framer-motion";
@@ -357,7 +357,7 @@ function ActiveSpread({
                   </div>
                   <CardDisplay
                     card={card}
-                    size="xs"
+                    size="sm"
                     isRevealed={revealed[idx] || false}
                     onClick={() => toggleReveal(idx)}
                   />
