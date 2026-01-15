@@ -256,7 +256,8 @@ function ActiveSpread({
     }
   }, [data, revealed]);
 
-  const [scores, setScores] = useState<number[]>([5, 5, 5, 5, 5, 5]);
+  const [scores, setScores] = useState<number[]>([0, 0, 0, 0, 0, 0]);
+  const [scoredIndices, setScoredIndices] = useState<Set<number>>(new Set());
 
   const questions =
     mode === "story"
@@ -464,9 +465,11 @@ function ActiveSpread({
     const labels = ["身", "心", "灵", "家", "事", "社"];
     const radarData = labels.map((label, i) => ({
       subject: label,
-      A: scores[i],
+      A: scoredIndices.has(i) ? scores[i] : 0,
       fullMark: 10,
     }));
+
+    const allScored = scoredIndices.size === 6;
 
     displayContent = (
       <div className="w-full py-8 flex flex-col items-center gap-8">
@@ -505,6 +508,7 @@ function ActiveSpread({
                       const newScores = [...scores];
                       newScores[idx] = val;
                       setScores(newScores);
+                      setScoredIndices(prev => new Set(prev).add(idx));
                     }
                   }
                 }}
@@ -513,6 +517,7 @@ function ActiveSpread({
                   stroke="hsl(var(--primary) / 0.2)"
                   gridType="circle"
                 />
+                <PolarRadiusAxis domain={[0, 10]} tickCount={11} tick={false} axisLine={false} />
                 <PolarAngleAxis
                   dataKey="subject"
                   tick={{
@@ -524,14 +529,22 @@ function ActiveSpread({
                 <Radar
                   name="Balance"
                   dataKey="A"
-                  stroke="hsl(var(--primary))"
+                  stroke={allScored ? "hsl(var(--primary))" : "transparent"}
                   fill="hsl(var(--primary))"
-                  fillOpacity={0.4}
-                  dot={{ 
-                    r: 8, 
-                    fill: "hsl(var(--primary))", 
-                    cursor: "pointer",
-                    pointerEvents: "all"
+                  fillOpacity={allScored ? 0.4 : 0}
+                  dot={(props: any) => {
+                    const { cx, cy, index } = props;
+                    if (!scoredIndices.has(index)) return <g key={index} />;
+                    return (
+                      <circle
+                        key={index}
+                        cx={cx}
+                        cy={cy}
+                        r={6}
+                        fill="hsl(var(--primary))"
+                        style={{ cursor: "pointer", pointerEvents: "all" }}
+                      />
+                    );
                   }}
                   isAnimationActive={false}
                 />
