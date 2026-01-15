@@ -325,8 +325,11 @@ function ActiveSpread({
           <div className="absolute inset-0 z-0 opacity-80 pointer-events-none">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="60%" data={radarData}>
-                <PolarGrid stroke="hsl(var(--primary) / 0.2)" />
-                <PolarAngleAxis dataKey="subject" tick={false} />
+                <PolarGrid stroke="hsl(var(--primary) / 0.2)" gridType="circle" />
+                <PolarAngleAxis 
+                  dataKey="subject" 
+                  tick={{ fill: 'hsl(var(--primary))', fontSize: 14, fontWeight: 'bold' }}
+                />
                 <Radar
                   name="Balance"
                   dataKey="A"
@@ -352,9 +355,6 @@ function ActiveSpread({
                   className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2"
                   style={{ left: `${x}%`, top: `${y}%` }}
                 >
-                  <div className="bg-background/80 backdrop-blur-sm px-2 py-0.5 rounded-full border border-primary/20 shadow-sm z-20">
-                    <span className="text-xs font-bold text-primary">{labels[idx]}</span>
-                  </div>
                   <CardDisplay
                     card={card}
                     size="sm"
@@ -381,17 +381,6 @@ function ActiveSpread({
               );
             })}
           </div>
-        </div>
-        
-        {/* Active Question Tooltip */}
-        <div className="max-w-md w-full bg-primary/5 border border-primary/10 rounded-2xl p-4 text-center">
-           <div className="flex items-center justify-center gap-2 mb-2 text-primary">
-             <Info className="w-4 h-4" />
-             <span className="text-xs font-bold uppercase tracking-wider">当前探索：{labels[questionIndex % 6]}</span>
-           </div>
-           <p className="text-sm italic text-muted-foreground">
-             {questions[questionIndex % 6]}
-           </p>
         </div>
       </div>
     );
