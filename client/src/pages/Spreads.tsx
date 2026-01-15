@@ -345,7 +345,7 @@ function ActiveSpread({
           <div className="relative w-full h-full z-10">
             {currentCards.slice(0, 6).map((card, idx) => {
               const angle = (idx * 60 - 90) * (Math.PI / 180);
-              const radius = 38; // percentage
+              const radius = 46; // increased from 38 to 46 to avoid overlap with keywords
               const x = 50 + radius * Math.cos(angle);
               const y = 50 + radius * Math.sin(angle);
 
