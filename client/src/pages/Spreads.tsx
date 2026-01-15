@@ -329,15 +329,20 @@ function ActiveSpread({
                 cy="50%" 
                 outerRadius="50%" 
                 data={radarData}
-                onClick={(e: any) => {
+                style={{ cursor: 'pointer' }}
+                onMouseDown={(e: any) => {
                   if (e && e.activeCoordinate) {
                     const { x, y } = e.activeCoordinate;
                     const chart = e.chart;
                     if (!chart) return;
                     
-                    const cx = chart.cx || 250;
-                    const cy = chart.cy || 250;
-                    const outerRadius = chart.outerRadius || 125;
+                    const container = document.querySelector('.recharts-responsive-container');
+                    if (!container) return;
+                    const rect = container.getBoundingClientRect();
+                    
+                    const cx = rect.width / 2;
+                    const cy = rect.height / 2;
+                    const outerRadius = (Math.min(rect.width, rect.height) / 2) * 0.5;
                     
                     const dx = x - cx;
                     const dy = y - cy;
@@ -368,7 +373,7 @@ function ActiveSpread({
                   stroke="hsl(var(--primary))"
                   fill="hsl(var(--primary))"
                   fillOpacity={0.4}
-                  dot={{ r: 4, fill: 'hsl(var(--primary))' }}
+                  dot={{ r: 6, fill: 'hsl(var(--primary))', cursor: 'pointer' }}
                 />
               </RadarChart>
             </ResponsiveContainer>
@@ -394,26 +399,10 @@ function ActiveSpread({
                     isRevealed={revealed[idx] || false}
                     onClick={() => toggleReveal(idx)}
                   />
-                  {revealed[idx] && (
-                    <div className="mt-2 bg-background/80 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-primary/20 shadow-sm text-[10px] text-primary font-bold">
-                      得分: {scores[idx]}
-                    </div>
-                  )}
-                  {revealed[idx] && (
-                    <div 
-                      className="mt-2 text-[10px] leading-tight text-muted-foreground text-center max-w-[100px] italic"
-                    >
-                      {questions[idx]}
-                    </div>
-                  )}
                 </div>
               );
             })}
           </div>
-        </div>
-        <div className="text-xs text-muted-foreground italic flex items-center gap-2">
-          <Info className="w-3 h-3" />
-          点击雷达图轴线或点即可直接打分
         </div>
       </div>
     );
@@ -527,28 +516,34 @@ function ActiveSpread({
                 transition={{ delay: 1.5, duration: 1 }}
                 className="space-y-6"
               >
-                <div className="flex items-center justify-center gap-2 max-w-md mx-auto">
-                  <AnimatePresence mode="wait">
-                    <motion.p 
-                      key={questionIndex}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.5 }}
-                      className="font-hand text-2xl text-primary italic"
-                    >
-                      {questions[questionIndex]}
-                    </motion.p>
-                  </AnimatePresence>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={handleNextQuestion}
-                    className="h-8 w-8 text-primary/60 hover:text-primary transition-colors shrink-0"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                  </Button>
-                </div>
+          <div className="flex items-center justify-center gap-2 max-w-md mx-auto">
+            <AnimatePresence mode="wait">
+              <motion.p 
+                key={questionIndex}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.5 }}
+                className="font-hand text-2xl text-primary italic"
+              >
+                {mode === 'balance-wheel' 
+                  ? (Object.values(revealed).filter(v => v).length > 0 
+                      ? questions[Object.keys(revealed).filter(k => revealed[parseInt(k)]).pop() as unknown as number || 0]
+                      : "请翻开卡片开始探索")
+                  : questions[questionIndex]}
+              </motion.p>
+            </AnimatePresence>
+            {mode !== 'balance-wheel' && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={handleNextQuestion}
+                className="h-8 w-8 text-primary/60 hover:text-primary transition-colors shrink-0"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
               </motion.div>
             )}
           </div>
