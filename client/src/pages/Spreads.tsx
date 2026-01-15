@@ -319,12 +319,44 @@ function ActiveSpread({
     }));
 
     displayContent = (
-      <div className="w-full py-8 flex flex-col items-center gap-12">
-        <div className="relative w-full max-w-[600px] aspect-square flex items-center justify-center">
+      <div className="w-full py-8 flex flex-col items-center gap-8">
+        <div className="relative w-full max-w-[500px] aspect-square flex items-center justify-center">
           {/* Radar Chart in Center */}
-          <div className="absolute inset-0 z-0 opacity-80 pointer-events-none">
+          <div className="absolute inset-0 z-0 opacity-80">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="60%" data={radarData}>
+              <RadarChart 
+                cx="50%" 
+                cy="50%" 
+                outerRadius="50%" 
+                data={radarData}
+                onClick={(e: any) => {
+                  if (e && e.activeCoordinate) {
+                    const { x, y } = e.activeCoordinate;
+                    const chart = e.chart;
+                    if (!chart) return;
+                    
+                    const cx = chart.cx || 250;
+                    const cy = chart.cy || 250;
+                    const outerRadius = chart.outerRadius || 125;
+                    
+                    const dx = x - cx;
+                    const dy = y - cy;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const val = Math.round(Math.min(10, Math.max(0, (dist / outerRadius) * 10)));
+                    
+                    // Find which axis was clicked by calculating angle
+                    let angle = Math.atan2(dy, dx) * (180 / Math.PI);
+                    angle = (angle + 90 + 360) % 360;
+                    const idx = Math.round((angle / 60) % 6);
+                    
+                    if (revealed[idx]) {
+                      const newScores = [...scores];
+                      newScores[idx] = val;
+                      setScores(newScores);
+                    }
+                  }
+                }}
+              >
                 <PolarGrid stroke="hsl(var(--primary) / 0.2)" gridType="circle" />
                 <PolarAngleAxis 
                   dataKey="subject" 
@@ -336,23 +368,24 @@ function ActiveSpread({
                   stroke="hsl(var(--primary))"
                   fill="hsl(var(--primary))"
                   fillOpacity={0.4}
+                  dot={{ r: 4, fill: 'hsl(var(--primary))' }}
                 />
               </RadarChart>
             </ResponsiveContainer>
           </div>
 
           {/* Cards in Circle */}
-          <div className="relative w-full h-full z-10">
+          <div className="relative w-full h-full z-10 pointer-events-none">
             {currentCards.slice(0, 6).map((card, idx) => {
               const angle = (idx * 60 - 90) * (Math.PI / 180);
-              const radius = 46; // increased from 38 to 46 to avoid overlap with keywords
+              const radius = 48; // Percentage from center
               const x = 50 + radius * Math.cos(angle);
               const y = 50 + radius * Math.sin(angle);
 
               return (
                 <div
                   key={idx}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2"
+                  className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2 pointer-events-auto"
                   style={{ left: `${x}%`, top: `${y}%` }}
                 >
                   <CardDisplay
@@ -362,25 +395,25 @@ function ActiveSpread({
                     onClick={() => toggleReveal(idx)}
                   />
                   {revealed[idx] && (
-                    <div className="w-24 mt-2 px-2 bg-background/60 backdrop-blur-sm rounded-lg py-1 border border-border/50">
-                      <Slider
-                        value={[scores[idx]]}
-                        max={10}
-                        step={1}
-                        onValueChange={([val]) => {
-                          const newScores = [...scores];
-                          newScores[idx] = val;
-                          setScores(newScores);
-                        }}
-                        className="w-full"
-                      />
-                      <div className="text-[10px] text-center mt-1 font-mono">{scores[idx]}</div>
+                    <div className="mt-2 bg-background/80 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-primary/20 shadow-sm text-[10px] text-primary font-bold">
+                      得分: {scores[idx]}
+                    </div>
+                  )}
+                  {revealed[idx] && (
+                    <div 
+                      className="mt-2 text-[10px] leading-tight text-muted-foreground text-center max-w-[100px] italic"
+                    >
+                      {questions[idx]}
                     </div>
                   )}
                 </div>
               );
             })}
           </div>
+        </div>
+        <div className="text-xs text-muted-foreground italic flex items-center gap-2">
+          <Info className="w-3 h-3" />
+          点击雷达图轴线或点即可直接打分
         </div>
       </div>
     );
