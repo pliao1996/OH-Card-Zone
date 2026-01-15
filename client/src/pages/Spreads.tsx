@@ -300,8 +300,16 @@ function ActiveSpread({
                 "“看着这张卡片，你的身体有什么感觉？”",
               ];
 
+  const summaryQuestions = [
+    "观察这组卡片，你整体的直觉感受是什么？",
+    "这些卡片之间是否存在某种你意想不到的联系？",
+    "如果这组牌是一个整体的建议，它在告诉你什么？",
+    "看完这组牌，你内心最强烈的渴望或担忧是什么？",
+    "为了回应这组牌带给你的启发，你打算做的第一件小事是什么？"
+  ];
+
   const handleNextQuestion = () => {
-    setQuestionIndex((prev) => (prev + 1) % questions.length);
+    setQuestionIndex((prev) => (prev + 1) % summaryQuestions.length);
   };
 
   // Initial draw on mount
@@ -708,29 +716,19 @@ function ActiveSpread({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.5 }}
-                      className="font-hand text-2xl text-primary italic"
+                      className="font-hand text-2xl text-primary italic text-center"
                     >
-                      {mode === "balance-wheel"
-                        ? Object.values(revealed).filter((v) => v).length > 0
-                          ? questions[
-                              (Object.keys(revealed)
-                                .filter((k) => revealed[parseInt(k)])
-                                .pop() as unknown as number) || 0
-                            ]
-                          : "请翻开卡片开始探索"
-                        : questions[questionIndex]}
+                      {summaryQuestions[questionIndex]}
                     </motion.p>
                   </AnimatePresence>
-                  {mode !== "balance-wheel" && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={handleNextQuestion}
-                      className="h-8 w-8 text-primary/60 hover:text-primary transition-colors shrink-0"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                    </Button>
-                  )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleNextQuestion}
+                    className="h-8 w-8 text-primary/60 hover:text-primary transition-colors shrink-0"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </Button>
                 </div>
               </motion.div>
             )}
