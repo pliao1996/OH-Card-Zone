@@ -492,6 +492,8 @@ function ActiveSpread({
       );
     }
   } else if (mode === "balance-wheel" || mode === "balance-wheel-custom") {
+    const [editingIndex, setEditingIndex] = useState<number | null>(null);
+
     const defaultLabels = ["身", "心", "灵", "家", "事", "社"];
     const labels =
       mode === "balance-wheel-custom" ? customKeywords : defaultLabels;
@@ -505,28 +507,6 @@ function ActiveSpread({
 
     displayContent = (
       <div className="w-full py-8 flex flex-col items-center gap-8">
-        {mode === "balance-wheel-custom" && (
-          <div className="w-full max-w-md grid grid-cols-3 gap-3 mb-4">
-            {customKeywords.map((kw, idx) => (
-              <div key={idx} className="flex flex-col gap-1">
-                <label className="text-[10px] text-muted-foreground font-medium pl-1">
-                  领域 {idx + 1}
-                </label>
-                <input
-                  type="text"
-                  value={kw}
-                  onChange={(e) => {
-                    const newKeywords = [...customKeywords];
-                    newKeywords[idx] = e.target.value.slice(0, 4);
-                    setCustomKeywords(newKeywords);
-                  }}
-                  placeholder={defaultLabels[idx]}
-                  className="bg-background border-2 border-primary/10 rounded-lg px-2 py-1.5 text-sm focus:border-primary/30 outline-none transition-colors"
-                />
-              </div>
-            ))}
-          </div>
-        )}
         <div className="relative w-full max-w-[450px] aspect-square flex items-center justify-center">
           {/* Radar Chart in Center */}
           <div className="absolute inset-0 z-0 opacity-80 pointer-events-auto">
@@ -540,7 +520,7 @@ function ActiveSpread({
                 onClick={(e: any) => {
                   if (e && e.activeCoordinate) {
                     const { x, y } = e.activeCoordinate;
-                    console.log("Clicked at:", x, y);
+
                     // Standard center and radius for the 450px container with 40% outerRadius
                     const cx = 225;
                     const cy = 225;
@@ -556,7 +536,7 @@ function ActiveSpread({
                     let angle = Math.atan2(dy, dx) * (180 / Math.PI);
                     angle = (angle + 90 + 360) % 360;
                     const idx = Math.round((angle / 60) % 6);
-                    console.log("Calculated index:", idx, "Value:", val);
+
                     if (revealed[idx]) {
                       const newScores = [...scores];
                       newScores[idx] = val;
@@ -576,14 +556,7 @@ function ActiveSpread({
                   tick={false}
                   axisLine={false}
                 />
-                <PolarAngleAxis
-                  dataKey="subject"
-                  tick={{
-                    fill: "hsl(var(--primary))",
-                    fontSize: 14,
-                    fontWeight: "bold",
-                  }}
-                />
+                <PolarAngleAxis dataKey="subject" tick={false} />
                 <Radar
                   name="Balance"
                   dataKey="A"
@@ -618,18 +591,57 @@ function ActiveSpread({
               const x = 50 + radius * Math.cos(angle);
               const y = 50 + radius * Math.sin(angle);
 
+              // Position for the label, between card and radar
+              const labelRadius = 25;
+              const labelX = 50 + labelRadius * Math.cos(angle);
+              const labelY = 50 + labelRadius * Math.sin(angle);
+
               return (
-                <div
-                  key={idx}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2 pointer-events-auto"
-                  style={{ left: `${x}%`, top: `${y}%` }}
-                >
-                  <CardDisplay
-                    card={card}
-                    size="sm"
-                    isRevealed={revealed[idx] || false}
-                    onClick={() => toggleReveal(idx)}
-                  />
+                <div key={idx} className="contents">
+                  <div
+                    className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2 pointer-events-auto"
+                    style={{ left: `${x}%`, top: `${y}%` }}
+                  >
+                    <CardDisplay
+                      card={card}
+                      size="sm"
+                      isRevealed={revealed[idx] || false}
+                      onClick={() => toggleReveal(idx)}
+                    />
+                  </div>
+
+                  {/* Inline Editable Label */}
+                  <div
+                    className="absolute -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-auto"
+                    style={{ left: `${labelX}%`, top: `${labelY}%` }}
+                  >
+                    {editingIndex === idx ? (
+                      <input
+                        autoFocus
+                        type="text"
+                        value={labels[idx]}
+                        className="w-16 text-center text-sm font-bold bg-transparent border-none outline-none text-primary"
+                        onChange={(e) => {
+                          const newKeywords = [...customKeywords];
+                          newKeywords[idx] = e.target.value.slice(0, 4);
+                          setCustomKeywords(newKeywords);
+                        }}
+                        onBlur={() => setEditingIndex(null)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") setEditingIndex(null);
+                        }}
+                      />
+                    ) : (
+                      <span
+                        className="text-sm font-bold text-primary cursor-text select-none min-w-[2rem] inline-block text-center"
+                        onDoubleClick={() => {
+                          setEditingIndex(idx);
+                        }}
+                      >
+                        {labels[idx] || (mode === "balance-wheel-custom" ? `领域${idx + 1}` : defaultLabels[idx])}
+                      </span>
+                    )}
+                  </div>
                 </div>
               );
             })}
