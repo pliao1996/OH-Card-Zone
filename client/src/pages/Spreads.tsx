@@ -484,18 +484,13 @@ function ActiveSpread({
                 data={radarData}
                 style={{ cursor: "pointer" }}
                 onClick={(e: any) => {
-                  console.log(e);
                   if (e && e.activeCoordinate) {
                     const { x, y } = e.activeCoordinate;
-                    const chart = e.chart;
-                    if (!chart) {
-                      console.log("chart not found");
-                      return;
-                    }
-
-                    const cx = chart.cx || 225;
-                    const cy = chart.cy || 225;
-                    const outerRadius = chart.outerRadius || 90;
+                    
+                    // Standard center and radius for the 450px container with 40% outerRadius
+                    const cx = 225;
+                    const cy = 225;
+                    const outerRadius = 180; // 450 * 0.4 = 180
 
                     const dx = x - cx;
                     const dy = y - cy;
@@ -513,8 +508,6 @@ function ActiveSpread({
                       newScores[idx] = val;
                       setScores(newScores);
                       setScoredIndices((prev) => new Set(prev).add(idx));
-                    } else {
-                      console.log("Card not revealed yet");
                     }
                   }
                 }}
