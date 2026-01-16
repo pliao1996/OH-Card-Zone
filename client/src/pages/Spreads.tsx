@@ -1,33 +1,32 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "wouter";
-import { Layout } from "@/components/ui/Layout";
-import { useDrawCards } from "@/hooks/use-cards";
-import { CardDisplay, PairDisplay } from "@/components/CardDisplay";
-import { Button } from "@/components/ui/button";
-import { type Card } from "@shared/schema";
-import { ArrowLeft, RotateCcw, Loader2, Info } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, Loader2, RotateCcw } from "lucide-react";
+import { useEffect, useState } from "react";
 import {
-  ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
   PolarAngleAxis,
+  PolarGrid,
   PolarRadiusAxis,
   Radar,
+  RadarChart,
+  ResponsiveContainer,
 } from "recharts";
-import { Slider } from "@/components/ui/slider";
-import { motion, AnimatePresence } from "framer-motion";
+
+import { CardDisplay, PairDisplay } from "@/components/CardDisplay";
+import { Button } from "@/components/ui/button";
+import { Layout } from "@/components/ui/Layout";
+import { useDrawCards } from "@/hooks/use-cards";
 import { cn } from "@/lib/utils";
+import { Card, type } from "@shared/schema";
 
 // --- Sub-component: Spread Selection ---
 function SpreadSelection({
   onSelect,
 }: {
   onSelect: (
-    mode: "image" | "word" | "pair" | "story" | "past-present-future",
+    mode: "image" | "word" | "pair" | "story" | "past-present-future"
   ) => void;
 }) {
   const [activeCountFilter, setActiveCountFilter] = useState<string | null>(
-    null,
+    null
   );
   const [activeTypeFilter, setActiveTypeFilter] = useState<string | null>(null);
 
@@ -152,7 +151,7 @@ function SpreadSelection({
             active={activeCountFilter === "1-2张"}
             onClick={() =>
               setActiveCountFilter(
-                activeCountFilter === "1-2张" ? null : "1-2张",
+                activeCountFilter === "1-2张" ? null : "1-2张"
               )
             }
           />
@@ -161,7 +160,7 @@ function SpreadSelection({
             active={activeCountFilter === "3-5张"}
             onClick={() =>
               setActiveCountFilter(
-                activeCountFilter === "3-5张" ? null : "3-5张",
+                activeCountFilter === "3-5张" ? null : "3-5张"
               )
             }
           />
@@ -170,7 +169,7 @@ function SpreadSelection({
             active={activeCountFilter === "6张以上"}
             onClick={() =>
               setActiveCountFilter(
-                activeCountFilter === "6张以上" ? null : "6张以上",
+                activeCountFilter === "6张以上" ? null : "6张以上"
               )
             }
           />
@@ -202,7 +201,7 @@ function SpreadSelection({
               opt.bg,
               opt.featured
                 ? "border-primary/20 shadow-lg ring-2 ring-primary/5 md:-mt-4 md:mb-4"
-                : "border-transparent shadow-sm",
+                : "border-transparent shadow-sm"
             )}
           >
             <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5 z-20">
@@ -282,48 +281,49 @@ function ActiveSpread({
 
   const [scores, setScores] = useState<number[]>([0, 0, 0, 0, 0, 0]);
   const [scoredIndices, setScoredIndices] = useState<Set<number>>(new Set());
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const questions =
     mode === "story"
       ? ["“这是一个什么样的故事？”"]
       : mode === "balance-wheel" || mode === "balance-wheel-custom"
-        ? [
-            "身：你现在的身体状态感觉如何？",
-            "心：你当下的情绪和心理状态是怎样的？",
-            "灵：你的内在精神世界或价值观目前处于什么状态？",
-            "家：你与家人的关系、家庭氛围如何？",
-            "事：你的事业、学业或目前专注的事情进展如何？",
-            "社：你的社交生活、人际关系或社会贡献如何？",
-          ]
-        : mode === "hero-journey-full"
-          ? [
-              "英雄：谁是这个故事的主角？",
-              "地点：故事在哪里拉开序幕？",
-              "技能：英雄拥有怎样的特殊能力？",
-              "使命：英雄必须完成什么任务？",
-              "宝物：英雄在途中得到了什么助力？",
-              "魔王：谁是故事中的反派或阻碍？",
-              "魔王技能：魔王有什么可怕的力量？",
-              "战斗：正邪之战是如何展开的？",
-              "结果：战斗最终谁胜谁负？",
-              "回首：回到平凡生活后，你如何看待这段往事？",
-            ]
-          : mode === "hero-journey"
-            ? [
-                "困境卡：明确英雄的起点，即当下的核心困境。",
-                "根源卡：探索困境背后的内在阻碍。",
-                "资源卡：寻找可调用的内在或外在资源。",
-                "行动卡：找到突破困境的关键行动。",
-                "成长卡：预见突破困境后英雄的状态。",
-                "守护卡：确定应对践行过程中可能出现阻碍的方法。",
-              ]
-            : [
-                "“这触动了你内心深处的什么？”",
-                "“这张卡片让你想到了生活中的哪个人或哪件事？”",
-                "“如果这张卡片会说话，它会对你说什么？”",
-                "“这张卡片描述了你现在的什么状态？”",
-                "“看着这张卡片，你的身体有什么感觉？”",
-              ];
+      ? [
+          "身：你现在的身体状态感觉如何？",
+          "心：你当下的情绪和心理状态是怎样的？",
+          "灵：你的内在精神世界或价值观目前处于什么状态？",
+          "家：你与家人的关系、家庭氛围如何？",
+          "事：你的事业、学业或目前专注的事情进展如何？",
+          "社：你的社交生活、人际关系或社会贡献如何？",
+        ]
+      : mode === "hero-journey-full"
+      ? [
+          "英雄：谁是这个故事的主角？",
+          "地点：故事在哪里拉开序幕？",
+          "技能：英雄拥有怎样的特殊能力？",
+          "使命：英雄必须完成什么任务？",
+          "宝物：英雄在途中得到了什么助力？",
+          "魔王：谁是故事中的反派或阻碍？",
+          "魔王技能：魔王有什么可怕的力量？",
+          "战斗：正邪之战是如何展开的？",
+          "结果：战斗最终谁胜谁负？",
+          "回首：回到平凡生活后，你如何看待这段往事？",
+        ]
+      : mode === "hero-journey"
+      ? [
+          "困境卡：明确英雄的起点，即当下的核心困境。",
+          "根源卡：探索困境背后的内在阻碍。",
+          "资源卡：寻找可调用的内在或外在资源。",
+          "行动卡：找到突破困境的关键行动。",
+          "成长卡：预见突破困境后英雄的状态。",
+          "守护卡：确定应对践行过程中可能出现阻碍的方法。",
+        ]
+      : [
+          "“这触动了你内心深处的什么？”",
+          "“这张卡片让你想到了生活中的哪个人或哪件事？”",
+          "“如果这张卡片会说话，它会对你说什么？”",
+          "“这张卡片描述了你现在的什么状态？”",
+          "“看着这张卡片，你的身体有什么感觉？”",
+        ];
 
   const getSpreadSummaryQuestions = () => {
     switch (mode) {
@@ -420,14 +420,14 @@ function ActiveSpread({
           mode === "hero-journey-full"
             ? 10
             : mode === "hero-journey" ||
-                mode === "balance-wheel" ||
-                mode === "balance-wheel-custom"
-              ? 6
-              : mode === "story"
-                ? 5
-                : mode === "past-present-future"
-                  ? 3
-                  : 1,
+              mode === "balance-wheel" ||
+              mode === "balance-wheel-custom"
+            ? 6
+            : mode === "story"
+            ? 5
+            : mode === "past-present-future"
+            ? 3
+            : 1,
       });
     }, 400);
   };
@@ -445,14 +445,14 @@ function ActiveSpread({
     (mode === "hero-journey-full"
       ? 10
       : mode === "hero-journey" ||
-          mode === "balance-wheel" ||
-          mode === "balance-wheel-custom"
-        ? 6
-        : mode === "story"
-          ? 5
-          : mode === "past-present-future"
-            ? 3
-            : 1);
+        mode === "balance-wheel" ||
+        mode === "balance-wheel-custom"
+      ? 6
+      : mode === "story"
+      ? 5
+      : mode === "past-present-future"
+      ? 3
+      : 1);
 
   // Prepare cards based on mode
   let displayContent;
@@ -492,8 +492,6 @@ function ActiveSpread({
       );
     }
   } else if (mode === "balance-wheel" || mode === "balance-wheel-custom") {
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
-
     const defaultLabels = ["身", "心", "灵", "家", "事", "社"];
     const labels =
       mode === "balance-wheel-custom" ? customKeywords : defaultLabels;
@@ -530,7 +528,7 @@ function ActiveSpread({
                     const dy = y - cy;
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     const val = Math.round(
-                      Math.min(10, Math.max(0, (dist / outerRadius) * 10)),
+                      Math.min(10, Math.max(0, (dist / outerRadius) * 10))
                     );
 
                     let angle = Math.atan2(dy, dx) * (180 / Math.PI);
@@ -638,7 +636,10 @@ function ActiveSpread({
                           setEditingIndex(idx);
                         }}
                       >
-                        {labels[idx] || (mode === "balance-wheel-custom" ? `领域${idx + 1}` : defaultLabels[idx])}
+                        {labels[idx] ||
+                          (mode === "balance-wheel-custom"
+                            ? `领域${idx + 1}`
+                            : defaultLabels[idx])}
                       </span>
                     )}
                   </div>
@@ -671,19 +672,19 @@ function ActiveSpread({
       mode === "past-present-future"
         ? ["过去", "现在", "未来"]
         : mode === "story"
-          ? ["一", "二", "三", "四", "五"]
-          : mode === "hero-journey"
-            ? ["困境卡", "根源卡", "资源卡", "行动卡", "成长卡", "守护卡"]
-            : journeyFullLabels;
+        ? ["一", "二", "三", "四", "五"]
+        : mode === "hero-journey"
+        ? ["困境卡", "根源卡", "资源卡", "行动卡", "成长卡", "守护卡"]
+        : journeyFullLabels;
 
     const count =
       mode === "hero-journey-full"
         ? 10
         : mode === "hero-journey"
-          ? 6
-          : mode === "story"
-            ? 5
-            : 3;
+        ? 6
+        : mode === "story"
+        ? 5
+        : 3;
     const cards = currentCards.slice(0, count);
     displayContent = (
       <div
@@ -692,10 +693,10 @@ function ActiveSpread({
           mode === "hero-journey-full"
             ? "grid-cols-2 md:grid-cols-5"
             : mode === "hero-journey"
-              ? "grid-cols-2 md:grid-cols-3"
-              : mode === "story"
-                ? "grid-cols-2 md:grid-cols-5"
-                : "grid-cols-1 md:grid-cols-3",
+            ? "grid-cols-2 md:grid-cols-3"
+            : mode === "story"
+            ? "grid-cols-2 md:grid-cols-5"
+            : "grid-cols-1 md:grid-cols-3"
         )}
       >
         {cards.map((card, idx) => (
@@ -740,37 +741,33 @@ function ActiveSpread({
     mode === "past-present-future"
       ? revealed[0] && revealed[1] && revealed[2]
       : mode === "story"
-        ? revealed[0] &&
-          revealed[1] &&
-          revealed[2] &&
-          revealed[3] &&
-          revealed[4]
-        : mode === "hero-journey"
-          ? revealed[0] &&
-            revealed[1] &&
-            revealed[2] &&
-            revealed[3] &&
-            revealed[4] &&
-            revealed[5]
-          : mode === "balance-wheel"
-            ? revealed[0] &&
-              revealed[1] &&
-              revealed[2] &&
-              revealed[3] &&
-              revealed[4] &&
-              revealed[5]
-            : mode === "hero-journey-full"
-              ? revealed[0] &&
-                revealed[1] &&
-                revealed[2] &&
-                revealed[3] &&
-                revealed[4] &&
-                revealed[5] &&
-                revealed[6] &&
-                revealed[7] &&
-                revealed[8] &&
-                revealed[9]
-              : revealed[0];
+      ? revealed[0] && revealed[1] && revealed[2] && revealed[3] && revealed[4]
+      : mode === "hero-journey"
+      ? revealed[0] &&
+        revealed[1] &&
+        revealed[2] &&
+        revealed[3] &&
+        revealed[4] &&
+        revealed[5]
+      : mode === "balance-wheel"
+      ? revealed[0] &&
+        revealed[1] &&
+        revealed[2] &&
+        revealed[3] &&
+        revealed[4] &&
+        revealed[5]
+      : mode === "hero-journey-full"
+      ? revealed[0] &&
+        revealed[1] &&
+        revealed[2] &&
+        revealed[3] &&
+        revealed[4] &&
+        revealed[5] &&
+        revealed[6] &&
+        revealed[7] &&
+        revealed[8] &&
+        revealed[9]
+      : revealed[0];
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -784,16 +781,16 @@ function ActiveSpread({
             {mode === "pair"
               ? "OH 经典组合"
               : mode === "past-present-future"
-                ? "时间轴牌阵 (过去/现在/未来)"
-                : mode === "story"
-                  ? "故事接龙"
-                  : mode === "hero-journey"
-                    ? "小英雄之旅"
-                    : mode === "hero-journey-full"
-                      ? "英雄之旅（完整版）"
-                      : mode === "balance-wheel"
-                        ? "生命平衡轮"
-                        : `单张${mode === "image" ? "图卡" : "字卡"}牌阵`}
+              ? "时间轴牌阵 (过去/现在/未来)"
+              : mode === "story"
+              ? "故事接龙"
+              : mode === "hero-journey"
+              ? "小英雄之旅"
+              : mode === "hero-journey-full"
+              ? "英雄之旅（完整版）"
+              : mode === "balance-wheel"
+              ? "生命平衡轮"
+              : `单张${mode === "image" ? "图卡" : "字卡"}牌阵`}
           </h2>
         </div>
         <div className="w-24">
