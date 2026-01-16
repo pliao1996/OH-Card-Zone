@@ -165,6 +165,15 @@ function SpreadSelection({
               )
             }
           />
+          <FilterButton
+            label="6张+"
+            active={activeCountFilter === "6张以上"}
+            onClick={() =>
+              setActiveCountFilter(
+                activeCountFilter === "6张以上" ? null : "6张以上",
+              )
+            }
+          />
           <div className="w-px h-4 bg-border/60 self-center mx-1 hidden sm:block" />
           <FilterButton
             label="抽牌"
@@ -243,7 +252,14 @@ function ActiveSpread({
   const [revealed, setRevealed] = useState<Record<number, boolean>>({});
   const [questionIndex, setQuestionIndex] = useState(0);
   const [currentCards, setCurrentCards] = useState<Card[]>([]);
-  const [customKeywords, setCustomKeywords] = useState<string[]>(["", "", "", "", "", ""]);
+  const [customKeywords, setCustomKeywords] = useState<string[]>([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
 
   // Update currentCards only when data changes AND we are NOT in the middle of a flip-back
   useState(() => {
@@ -403,7 +419,9 @@ function ActiveSpread({
         count:
           mode === "hero-journey-full"
             ? 10
-            : mode === "hero-journey" || mode === "balance-wheel" || mode === "balance-wheel-custom"
+            : mode === "hero-journey" ||
+                mode === "balance-wheel" ||
+                mode === "balance-wheel-custom"
               ? 6
               : mode === "story"
                 ? 5
@@ -426,7 +444,9 @@ function ActiveSpread({
     currentCards.length >=
     (mode === "hero-journey-full"
       ? 10
-      : mode === "hero-journey" || mode === "balance-wheel" || mode === "balance-wheel-custom"
+      : mode === "hero-journey" ||
+          mode === "balance-wheel" ||
+          mode === "balance-wheel-custom"
         ? 6
         : mode === "story"
           ? 5
@@ -473,7 +493,8 @@ function ActiveSpread({
     }
   } else if (mode === "balance-wheel" || mode === "balance-wheel-custom") {
     const defaultLabels = ["身", "心", "灵", "家", "事", "社"];
-    const labels = mode === "balance-wheel-custom" ? customKeywords : defaultLabels;
+    const labels =
+      mode === "balance-wheel-custom" ? customKeywords : defaultLabels;
     const radarData = labels.map((label, i) => ({
       subject: label || `领域 ${i + 1}`,
       A: scoredIndices.has(i) ? scores[i] : 0,
@@ -535,7 +556,7 @@ function ActiveSpread({
                     let angle = Math.atan2(dy, dx) * (180 / Math.PI);
                     angle = (angle + 90 + 360) % 360;
                     const idx = Math.round((angle / 60) % 6);
-
+                    console.log("Calculated index:", idx, "Value:", val);
                     if (revealed[idx]) {
                       const newScores = [...scores];
                       newScores[idx] = val;
