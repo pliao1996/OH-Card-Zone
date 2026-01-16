@@ -89,6 +89,13 @@ function SpreadSelection({
       bg: "bg-indigo-50/50 hover:bg-indigo-100/50 border-indigo-100 shadow-sm hover:shadow-md",
       tags: ["6张以上", "抽卡"],
     },
+    {
+      id: "balance-wheel-custom",
+      title: "平衡轮（自定义）",
+      desc: "自定义六个关键领域，抽牌后评估这些领域的现状并打分。",
+      bg: "bg-amber-50/50 hover:bg-amber-100/50 border-amber-100 shadow-sm hover:shadow-md",
+      tags: ["6张以上", "抽卡"],
+    },
   ];
 
   const filteredOptions = options.filter((opt) => {
@@ -236,6 +243,7 @@ function ActiveSpread({
   const [revealed, setRevealed] = useState<Record<number, boolean>>({});
   const [questionIndex, setQuestionIndex] = useState(0);
   const [currentCards, setCurrentCards] = useState<Card[]>([]);
+  const [customKeywords, setCustomKeywords] = useState<string[]>(["", "", "", "", "", ""]);
 
   // Update currentCards only when data changes AND we are NOT in the middle of a flip-back
   useState(() => {
@@ -262,7 +270,7 @@ function ActiveSpread({
   const questions =
     mode === "story"
       ? ["“这是一个什么样的故事？”"]
-      : mode === "balance-wheel"
+      : mode === "balance-wheel" || mode === "balance-wheel-custom"
         ? [
             "身：你现在的身体状态感觉如何？",
             "心：你当下的情绪和心理状态是怎样的？",
@@ -310,6 +318,7 @@ function ActiveSpread({
           "回顾这段旅程，哪个阶段带给你的成长最为深刻？",
         ];
       case "balance-wheel":
+      case "balance-wheel-custom":
         return [
           "观察这个平衡轮，哪一个领域的缺失最让你感到意外？",
           "如果你只提升其中一个领域，哪个领域的改变会带动整体的平衡？",
@@ -365,7 +374,7 @@ function ActiveSpread({
     } else if (mode === "hero-journey-full") {
       // Need 10 cards
       draw({ mode: "image", count: 10 } as any);
-    } else if (mode === "balance-wheel") {
+    } else if (mode === "balance-wheel" || mode === "balance-wheel-custom") {
       // Need 6 cards
       draw({ mode: "image", count: 6 } as any);
     } else if (mode === "pair") {
@@ -387,13 +396,14 @@ function ActiveSpread({
         mode: (mode === "past-present-future" ||
         mode === "story" ||
         mode.startsWith("hero-journey") ||
-        mode === "balance-wheel"
+        mode === "balance-wheel" ||
+        mode === "balance-wheel-custom"
           ? "image"
           : mode) as any,
         count:
           mode === "hero-journey-full"
             ? 10
-            : mode === "hero-journey" || mode === "balance-wheel"
+            : mode === "hero-journey" || mode === "balance-wheel" || mode === "balance-wheel-custom"
               ? 6
               : mode === "story"
                 ? 5
@@ -416,7 +426,7 @@ function ActiveSpread({
     currentCards.length >=
     (mode === "hero-journey-full"
       ? 10
-      : mode === "hero-journey" || mode === "balance-wheel"
+      : mode === "hero-journey" || mode === "balance-wheel" || mode === "balance-wheel-custom"
         ? 6
         : mode === "story"
           ? 5
@@ -461,10 +471,11 @@ function ActiveSpread({
         </div>
       );
     }
-  } else if (mode === "balance-wheel") {
-    const labels = ["身", "心", "灵", "家", "事", "社"];
+  } else if (mode === "balance-wheel" || mode === "balance-wheel-custom") {
+    const defaultLabels = ["身", "心", "灵", "家", "事", "社"];
+    const labels = mode === "balance-wheel-custom" ? customKeywords : defaultLabels;
     const radarData = labels.map((label, i) => ({
-      subject: label,
+      subject: label || `领域 ${i + 1}`,
       A: scoredIndices.has(i) ? scores[i] : 0,
       fullMark: 10,
     }));
@@ -473,6 +484,28 @@ function ActiveSpread({
 
     displayContent = (
       <div className="w-full py-8 flex flex-col items-center gap-8">
+        {mode === "balance-wheel-custom" && (
+          <div className="w-full max-w-md grid grid-cols-3 gap-3 mb-4">
+            {customKeywords.map((kw, idx) => (
+              <div key={idx} className="flex flex-col gap-1">
+                <label className="text-[10px] text-muted-foreground font-medium pl-1">
+                  领域 {idx + 1}
+                </label>
+                <input
+                  type="text"
+                  value={kw}
+                  onChange={(e) => {
+                    const newKeywords = [...customKeywords];
+                    newKeywords[idx] = e.target.value.slice(0, 4);
+                    setCustomKeywords(newKeywords);
+                  }}
+                  placeholder={defaultLabels[idx]}
+                  className="bg-background border-2 border-primary/10 rounded-lg px-2 py-1.5 text-sm focus:border-primary/30 outline-none transition-colors"
+                />
+              </div>
+            ))}
+          </div>
+        )}
         <div className="relative w-full max-w-[450px] aspect-square flex items-center justify-center">
           {/* Radar Chart in Center */}
           <div className="absolute inset-0 z-0 opacity-80 pointer-events-auto">
@@ -486,7 +519,7 @@ function ActiveSpread({
                 onClick={(e: any) => {
                   if (e && e.activeCoordinate) {
                     const { x, y } = e.activeCoordinate;
-                    
+                    console.log("Clicked at:", x, y);
                     // Standard center and radius for the 450px container with 40% outerRadius
                     const cx = 225;
                     const cy = 225;
