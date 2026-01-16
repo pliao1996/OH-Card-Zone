@@ -303,36 +303,36 @@ function ActiveSpread({
 
   const getSpreadSummaryQuestions = () => {
     switch (mode) {
-      case 'past-present-future':
+      case "past-present-future":
         return [
           "从过去到未来的演变中，你看到了什么样的生命脉络？",
           "为了走向理想的未来，现在的你最需要做出的调整是什么？",
-          "回顾这段旅程，哪个阶段带给你的成长最为深刻？"
+          "回顾这段旅程，哪个阶段带给你的成长最为深刻？",
         ];
-      case 'balance-wheel':
+      case "balance-wheel":
         return [
           "观察这个平衡轮，哪一个领域的缺失最让你感到意外？",
           "如果你只提升其中一个领域，哪个领域的改变会带动整体的平衡？",
-          "看到这个形状，你现在对自己生活的平衡感有什么新的定义？"
+          "看到这个形状，你现在对自己生活的平衡感有什么新的定义？",
         ];
-      case 'hero-journey':
-      case 'hero-journey-full':
+      case "hero-journey":
+      case "hero-journey-full":
         return [
           "在这个英雄故事中，你感受到的最大力量源泉在哪里？",
           "这场冒险揭示了你潜意识中怎样的核心冲突与渴望？",
-          "如果英雄现在对你说一句话，他会告诉你什么？"
+          "如果英雄现在对你说一句话，他会告诉你什么？",
         ];
-      case 'story':
+      case "story":
         return [
           "这个故事的主旋律是关于什么的？（如勇气、接纳、转变等）",
           "故事中哪个转折点让你印象最深刻？它对应了你现实中的什么？",
-          "如果这个故事有续集，你希望接下来的剧情如何发展？"
+          "如果这个故事有续集，你希望接下来的剧情如何发展？",
         ];
-      case 'pair':
+      case "pair":
         return [
           "图卡与字卡的碰撞，产生了一层怎样的意想不到的新含义？",
           "这个组合触动了你当下哪一个具体的决策或情感困惑？",
-          "如果用一个词来概括这个组合带给你的启示，那会是什么？"
+          "如果用一个词来概括这个组合带给你的启示，那会是什么？",
         ];
       default:
         return [
@@ -340,7 +340,7 @@ function ActiveSpread({
           "这些卡片之间是否存在某种你意想不到的联系？",
           "如果这组牌是一个整体的建议，它在告诉你什么？",
           "看完这组牌，你内心最强烈的渴望或担忧是什么？",
-          "为了回应这组牌带给你的启发，你打算做的第一件小事是什么？"
+          "为了回应这组牌带给你的启发，你打算做的第一件小事是什么？",
         ];
     }
   };
@@ -484,10 +484,14 @@ function ActiveSpread({
                 data={radarData}
                 style={{ cursor: "pointer" }}
                 onClick={(e: any) => {
+                  console.log(e);
                   if (e && e.activeCoordinate) {
                     const { x, y } = e.activeCoordinate;
                     const chart = e.chart;
-                    if (!chart) return;
+                    if (!chart) {
+                      console.log("chart not found");
+                      return;
+                    }
 
                     const cx = chart.cx || 225;
                     const cy = chart.cy || 225;
@@ -508,7 +512,9 @@ function ActiveSpread({
                       const newScores = [...scores];
                       newScores[idx] = val;
                       setScores(newScores);
-                      setScoredIndices(prev => new Set(prev).add(idx));
+                      setScoredIndices((prev) => new Set(prev).add(idx));
+                    } else {
+                      console.log("Card not revealed yet");
                     }
                   }
                 }}
@@ -517,7 +523,12 @@ function ActiveSpread({
                   stroke="hsl(var(--primary) / 0.2)"
                   gridType="circle"
                 />
-                <PolarRadiusAxis domain={[0, 10]} tickCount={11} tick={false} axisLine={false} />
+                <PolarRadiusAxis
+                  domain={[0, 10]}
+                  tickCount={11}
+                  tick={false}
+                  axisLine={false}
+                />
                 <PolarAngleAxis
                   dataKey="subject"
                   tick={{
@@ -556,7 +567,7 @@ function ActiveSpread({
           <div className="relative w-full h-full z-10 pointer-events-none">
             {currentCards.slice(0, 6).map((card, idx) => {
               const angle = (idx * 60 - 90) * (Math.PI / 180);
-              const radius = 45; 
+              const radius = 45;
               const x = 50 + radius * Math.cos(angle);
               const y = 50 + radius * Math.sin(angle);
 
