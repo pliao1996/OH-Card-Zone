@@ -28,13 +28,18 @@ export function useSpreadState({
   const [revealed, setRevealed] = useState<Record<number, boolean>>({});
   const [questionIndex, setQuestionIndex] = useState(0);
   const [currentCards, setCurrentCards] = useState<Card[]>([]);
+  const [isRedrawing, setIsRedrawing] = useState(false);
 
   // Synchronize currentCards when data arrives and cards are hidden
   useEffect(() => {
-    if (data?.cards && Object.values(revealed).every((v) => !v)) {
+    if (
+      data?.cards &&
+      Object.values(revealed).every((v) => !v) &&
+      !isRedrawing
+    ) {
       setCurrentCards(data.cards);
     }
-  }, [data, revealed]);
+  }, [data, revealed, isRedrawing]);
 
   // Determine required card count based on mode
   const getCardCount = (): number => {
@@ -76,35 +81,40 @@ export function useSpreadState({
   }, [mode, draw]);
 
   const handleDrawAgain = () => {
+    setIsRedrawing(true);
     setRevealed({});
+
+    const drawMode =
+      mode === "past-present-future" ||
+      mode === "story" ||
+      mode.startsWith("hero-journey") ||
+      mode === "balance-wheel" ||
+      mode === "balance-wheel-custom" ||
+      mode === "ho-oponopono"
+        ? "image"
+        : mode;
+
+    const count =
+      mode === "hero-journey-full"
+        ? 10
+        : mode === "hero-journey" ||
+            mode === "balance-wheel" ||
+            mode === "balance-wheel-custom"
+          ? 6
+          : mode === "story"
+            ? 5
+            : mode === "past-present-future"
+              ? 3
+              : mode === "ho-oponopono"
+                ? 4
+                : 1;
+
+    draw({ mode: drawMode as any, count });
+
+    // Keep cards face-down until new cards are fully loaded
     setTimeout(() => {
-      const drawMode =
-        mode === "past-present-future" ||
-        mode === "story" ||
-        mode.startsWith("hero-journey") ||
-        mode === "balance-wheel" ||
-        mode === "balance-wheel-custom" ||
-        mode === "ho-oponopono"
-          ? "image"
-          : mode;
-
-      const count =
-        mode === "hero-journey-full"
-          ? 10
-          : mode === "hero-journey" ||
-              mode === "balance-wheel" ||
-              mode === "balance-wheel-custom"
-            ? 6
-            : mode === "story"
-              ? 5
-              : mode === "past-present-future"
-                ? 3
-                : mode === "ho-oponopono"
-                  ? 4
-                  : 1;
-
-      draw({ mode: drawMode as any, count });
-    }, 400);
+      setIsRedrawing(false);
+    }, 1000);
   };
 
   const toggleReveal = (index: number) => {

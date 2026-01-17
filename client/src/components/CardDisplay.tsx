@@ -34,11 +34,11 @@ export function CardDisplay({
   if (size === "lg") {
     return (
       <div
-        className="w-auto max-w-4xl flex items-center justify-center bg-white rounded-xl shadow-lg border border-border/50 overflow-hidden cursor-pointer"
+        className="w-auto h-96 flex items-center justify-center bg-white rounded-xl shadow-lg border border-border/50 overflow-hidden cursor-pointer"
         onClick={onClick}
       >
         {!isRevealed ? (
-          <div className="w-full h-96 flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
             <img
               src="/images/card_back_image.png"
               alt="Card Back"
@@ -64,7 +64,7 @@ export function CardDisplay({
                 : `/images/${card.content}`
             }
             alt={card.title}
-            className="w-full h-auto object-contain"
+            className="w-full h-full object-cover"
           />
         )}
       </div>
@@ -122,7 +122,7 @@ export function CardDisplay({
                 className={cn(
                   "transition-all duration-300",
                   size === "lg"
-                    ? "max-w-full max-h-full object-contain"
+                    ? "w-full h-full object-cover"
                     : "w-full h-full object-cover"
                 )}
                 onError={(e) => {

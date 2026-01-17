@@ -145,7 +145,7 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
         ];
       case "word":
         return [
-          "你最想表达的什么？",
+          "你最想表达的是什么？",
           "这个词语在你生活中代表了什么？",
           "这个词语触发了你怎样的情感反应？",
           "如果要用一个图像来表现这个词语，你会选择什么样的图像？",
@@ -271,8 +271,8 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
         </div>
       </div>
 
-      <div className="min-h-[500px] flex flex-col items-center justify-center bg-secondary/10 rounded-3xl border-2 border-dashed border-border p-8 relative overflow-hidden">
-        <div className="w-full">
+      <div className="h-[700px] flex flex-col items-center justify-center bg-secondary/10 rounded-3xl border-2 border-dashed border-border p-8 relative overflow-hidden">
+        <div className="w-full flex-1 flex items-center justify-center">
           {!hasData ? (
             <div className="flex flex-col items-center justify-center h-96 w-full">
               <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
@@ -286,7 +286,7 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
         </div>
 
         {!isPending && hasData && (
-          <div className="mt-8 text-center space-y-2">
+          <div className="mt-8 text-center space-y-2 h-20 flex flex-col items-center justify-start">
             {!allRevealed ? (
               <p className="text-muted-foreground animate-bounce">
                 点击卡片翻牌
@@ -296,7 +296,7 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.5, duration: 1 }}
-                className="space-y-6"
+                className="space-y-6 w-full"
               >
                 <div className="flex items-center justify-center gap-2 max-w-md mx-auto">
                   <AnimatePresence mode="wait">
