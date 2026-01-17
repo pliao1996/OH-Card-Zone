@@ -37,6 +37,13 @@ export function SpreadSelection({ onSelect }: SpreadSelectionProps) {
       tags: ["1-2张", "抽卡"],
     },
     {
+      id: "positive-negative",
+      title: "正负转换",
+      desc: "抽取两张牌，分别代表正面和负面视角，点击对换按钮自由切换两张牌的位置。",
+      bg: "bg-cyan-50/50 hover:bg-cyan-100/50 border-cyan-100 shadow-sm hover:shadow-md",
+      tags: ["1-2张", "抽卡"],
+    },
+    {
       id: "past-present-future",
       title: "时间轴牌阵",
       desc: "抽取三张卡片，分别代表过去、现在和未来。",

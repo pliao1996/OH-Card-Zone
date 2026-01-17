@@ -7,7 +7,8 @@ import { Layout } from '@/components/ui/Layout';
 
 import {
     BalanceWheelSpread, HeroJourneyFullSpread, HeroJourneySpread, HoOponoponoSpread, PairSpread,
-    PastPresentFutureSpread, SingleCardSpread, SpreadSelection, StorySpread, useSpreadState
+    PastPresentFutureSpread, PositiveNegativeSpread, SingleCardSpread, SpreadSelection, StorySpread,
+    useSpreadState
 } from './spreads/index';
 
 interface ActiveSpreadProps {
@@ -43,6 +44,14 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
       case "pair":
         return (
           <PairSpread
+            currentCards={currentCards}
+            revealed={revealed}
+            toggleReveal={toggleReveal}
+          />
+        );
+      case "positive-negative":
+        return (
+          <PositiveNegativeSpread
             currentCards={currentCards}
             revealed={revealed}
             toggleReveal={toggleReveal}
@@ -115,6 +124,8 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
     switch (mode) {
       case "pair":
         return "OH 经典组合";
+      case "positive-negative":
+        return "正负转换";
       case "past-present-future":
         return "时间轴牌阵 (过去/现在/未来)";
       case "story":
@@ -182,6 +193,12 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
           "这个组合触动了你当下哪一个具体的决策或情感困惑？",
           "如果用一个词来概括这个组合带给你的启示，那会是什么？",
         ];
+      case "positive-negative":
+        return [
+          "正面与负面的对比，为你揭示了什么层面的真相？",
+          "这两张牌的视角转换，如何帮助你看到同一件事的完整面貌？",
+          "在正负两面中找到平衡，你现在的新视角是什么？",
+        ];
       case "ho-oponopono":
         return [
           "面对这四句疗愈之言，哪一句对你当下的生活最有触动？",
@@ -241,6 +258,8 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
       );
     } else if (mode === "ho-oponopono") {
       return revealed[0] && revealed[1] && revealed[2] && revealed[3];
+    } else if (mode === "positive-negative" || mode === "pair") {
+      return revealed[0] && revealed[1];
     }
     return revealed[0] === true;
   };

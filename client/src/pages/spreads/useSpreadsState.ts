@@ -53,6 +53,7 @@ export function useSpreadState({
     if (mode === "story") return 5;
     if (mode === "past-present-future") return 3;
     if (mode === "ho-oponopono") return 4;
+    if (mode === "positive-negative") return 2;
     return 1;
   };
 
@@ -73,6 +74,8 @@ export function useSpreadState({
       draw({ mode: "image", count: 6 } as any);
     } else if (mode === "ho-oponopono") {
       draw({ mode: "image", count: 4 } as any);
+    } else if (mode === "positive-negative") {
+      draw({ mode: "image", count: 2 } as any);
     } else if (mode === "pair") {
       draw({ mode: "pair" } as any);
     } else {
@@ -90,7 +93,8 @@ export function useSpreadState({
       mode.startsWith("hero-journey") ||
       mode === "balance-wheel" ||
       mode === "balance-wheel-custom" ||
-      mode === "ho-oponopono"
+      mode === "ho-oponopono" ||
+      mode === "positive-negative"
         ? "image"
         : mode;
 
@@ -107,7 +111,9 @@ export function useSpreadState({
               ? 3
               : mode === "ho-oponopono"
                 ? 4
-                : 1;
+                : mode === "positive-negative"
+                  ? 2
+                  : 1;
 
     draw({ mode: drawMode as any, count });
 
