@@ -1,0 +1,138 @@
+import { useEffect, useState } from "react";
+
+import { useDrawCards } from "@/hooks/use-cards";
+import { Card } from "@shared/schema";
+
+export interface UseSpreadStateProps {
+  mode: string;
+}
+
+export interface UseSpreadStateReturn {
+  currentCards: Card[];
+  revealed: Record<number, boolean>;
+  questionIndex: number;
+  setRevealed: (revealed: Record<number, boolean>) => void;
+  setQuestionIndex: (index: number) => void;
+  toggleReveal: (index: number) => void;
+  handleDrawAgain: () => void;
+  handleNextQuestion: () => void;
+  hasData: boolean;
+  isPending: boolean;
+  data: any;
+}
+
+export function useSpreadState({
+  mode,
+}: UseSpreadStateProps): UseSpreadStateReturn {
+  const { mutate: draw, data, isPending } = useDrawCards();
+  const [revealed, setRevealed] = useState<Record<number, boolean>>({});
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [currentCards, setCurrentCards] = useState<Card[]>([]);
+
+  // Update currentCards only when data changes AND we are NOT in the middle of a flip-back
+  useState(() => {
+    if (data?.cards) {
+      if (Object.values(revealed).some((v) => v)) {
+        setCurrentCards(data.cards);
+      }
+    }
+  });
+
+  // Synchronize currentCards when data arrives and cards are hidden
+  useEffect(() => {
+    if (data?.cards && Object.values(revealed).every((v) => !v)) {
+      setCurrentCards(data.cards);
+    }
+  }, [data, revealed]);
+
+  // Determine required card count based on mode
+  const getCardCount = (): number => {
+    if (mode === "hero-journey-full") return 10;
+    if (
+      mode === "hero-journey" ||
+      mode === "balance-wheel" ||
+      mode === "balance-wheel-custom"
+    )
+      return 6;
+    if (mode === "story") return 5;
+    if (mode === "past-present-future") return 3;
+    return 1;
+  };
+
+  const cardCount = getCardCount();
+  const hasData = currentCards.length >= cardCount;
+
+  // Initial draw on mount
+  useState(() => {
+    if (mode === "past-present-future") {
+      draw({ mode: "image", count: 3 } as any);
+    } else if (mode === "story") {
+      draw({ mode: "image", count: 5 } as any);
+    } else if (mode === "hero-journey") {
+      draw({ mode: "image", count: 6 } as any);
+    } else if (mode === "hero-journey-full") {
+      draw({ mode: "image", count: 10 } as any);
+    } else if (mode === "balance-wheel" || mode === "balance-wheel-custom") {
+      draw({ mode: "image", count: 6 } as any);
+    } else if (mode === "pair") {
+      draw({ mode: "pair" } as any);
+    } else {
+      draw({ mode: mode as any });
+    }
+  });
+
+  const handleDrawAgain = () => {
+    setRevealed({});
+    setTimeout(() => {
+      const drawMode =
+        mode === "past-present-future" ||
+        mode === "story" ||
+        mode.startsWith("hero-journey") ||
+        mode === "balance-wheel" ||
+        mode === "balance-wheel-custom"
+          ? "image"
+          : mode;
+
+      const count =
+        mode === "hero-journey-full"
+          ? 10
+          : mode === "hero-journey" ||
+            mode === "balance-wheel" ||
+            mode === "balance-wheel-custom"
+          ? 6
+          : mode === "story"
+          ? 5
+          : mode === "past-present-future"
+          ? 3
+          : 1;
+
+      draw({ mode: drawMode as any, count });
+    }, 400);
+  };
+
+  const toggleReveal = (index: number) => {
+    if (data?.cards) {
+      setCurrentCards(data.cards);
+      setRevealed((prev) => ({ ...prev, [index]: true }));
+    }
+  };
+
+  const handleNextQuestion = () => {
+    // This will be overridden in parent components with proper question count
+    setQuestionIndex((prev) => prev + 1);
+  };
+
+  return {
+    currentCards,
+    revealed,
+    questionIndex,
+    setRevealed,
+    setQuestionIndex,
+    toggleReveal,
+    handleDrawAgain,
+    handleNextQuestion,
+    hasData,
+    isPending,
+    data,
+  };
+}
