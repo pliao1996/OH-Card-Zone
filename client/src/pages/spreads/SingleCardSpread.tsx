@@ -1,13 +1,26 @@
-import { CardDisplay } from "@/components/CardDisplay";
+import { CardDisplay } from '@/components/CardDisplay';
+import { Card } from '@shared/schema';
 
-import { useSpreadState } from "./useSpreadsState";
+import { useSpreadState } from './useSpreadsState';
 
 interface SingleCardSpreadProps {
   mode: "image" | "word";
+  currentCards?: Card[];
+  revealed?: Record<number, boolean>;
+  toggleReveal?: (index: number) => void;
 }
 
-export function SingleCardSpread({ mode }: SingleCardSpreadProps) {
-  const { currentCards, revealed, toggleReveal } = useSpreadState({ mode });
+export function SingleCardSpread({
+  mode,
+  currentCards: propCurrentCards,
+  revealed: propRevealed,
+  toggleReveal: propToggleReveal,
+}: SingleCardSpreadProps) {
+  const hookState = useSpreadState({ mode });
+
+  const currentCards = propCurrentCards ?? hookState.currentCards;
+  const revealed = propRevealed ?? hookState.revealed;
+  const toggleReveal = propToggleReveal ?? hookState.toggleReveal;
 
   const card = currentCards[0];
 

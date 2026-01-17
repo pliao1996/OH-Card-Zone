@@ -1,12 +1,23 @@
-import { CardDisplay } from "@/components/CardDisplay";
-import { cn } from "@/lib/utils";
+import { CardDisplay } from '@/components/CardDisplay';
+import { cn } from '@/lib/utils';
+import { Card } from '@shared/schema';
 
-import { useSpreadState } from "./useSpreadsState";
+import { useSpreadState } from './useSpreadsState';
 
-export function HeroJourneyFullSpread() {
-  const { currentCards, revealed, toggleReveal } = useSpreadState({
+interface HeroJourneyFullSpreadProps {
+  currentCards?: Card[];
+  revealed?: Record<number, boolean>;
+  toggleReveal?: (index: number) => void;
+}
+
+export function HeroJourneyFullSpread(props?: HeroJourneyFullSpreadProps) {
+  const hookState = useSpreadState({
     mode: "hero-journey-full",
   });
+
+  const currentCards = props?.currentCards ?? hookState.currentCards;
+  const revealed = props?.revealed ?? hookState.revealed;
+  const toggleReveal = props?.toggleReveal ?? hookState.toggleReveal;
 
   const labels = [
     "英雄",

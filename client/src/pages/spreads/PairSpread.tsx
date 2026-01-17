@@ -1,11 +1,22 @@
-import { PairDisplay } from "@/components/CardDisplay";
+import { PairDisplay } from '@/components/CardDisplay';
+import { Card } from '@shared/schema';
 
-import { useSpreadState } from "./useSpreadsState";
+import { useSpreadState } from './useSpreadsState';
 
-export function PairSpread() {
-  const { currentCards, revealed, toggleReveal } = useSpreadState({
+interface PairSpreadProps {
+  currentCards?: Card[];
+  revealed?: Record<number, boolean>;
+  toggleReveal?: (index: number) => void;
+}
+
+export function PairSpread(props?: PairSpreadProps) {
+  const hookState = useSpreadState({
     mode: "pair",
   });
+
+  const currentCards = props?.currentCards ?? hookState.currentCards;
+  const revealed = props?.revealed ?? hookState.revealed;
+  const toggleReveal = props?.toggleReveal ?? hookState.toggleReveal;
 
   const img = currentCards.find((c) => c.type === "image");
   const word = currentCards.find((c) => c.type === "word");

@@ -6,6 +6,7 @@ export { StorySpread } from "./StorySpread";
 export { HeroJourneySpread } from "./HeroJourneySpread";
 export { HeroJourneyFullSpread } from "./HeroJourneyFullSpread";
 export { BalanceWheelSpread } from "./BalanceWheelSpread";
+export { HoOponoponoSpread } from "./HoOponoponoSpread";
 export { SpreadSelection } from "./SpreadSelection";
 
 // Hooks

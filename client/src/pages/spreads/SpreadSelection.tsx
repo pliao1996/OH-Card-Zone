@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface SpreadSelectionProps {
   onSelect: (mode: string) => void;
@@ -41,6 +41,13 @@ export function SpreadSelection({ onSelect }: SpreadSelectionProps) {
       title: "时间轴牌阵",
       desc: "抽取三张卡片，分别代表过去、现在和未来。",
       bg: "bg-teal-50/50 hover:bg-teal-100/50 border-teal-100 shadow-sm hover:shadow-md",
+      tags: ["3-5张", "抽卡"],
+    },
+    {
+      id: "ho-oponopono",
+      title: "零极限牌阵",
+      desc: "Ho'oponopono四步疗愈法：对不起、请原谅我、谢谢你、我爱你。释放过去，拥抱原谅与爱。",
+      bg: "bg-pink-50/50 hover:bg-pink-100/50 border-pink-100 shadow-sm hover:shadow-md",
       tags: ["3-5张", "抽卡"],
     },
     {
@@ -107,7 +114,7 @@ export function SpreadSelection({ onSelect }: SpreadSelectionProps) {
   );
 
   return (
-    <div className="max-w-4xl mx-auto text-center space-y-12">
+    <div className="max-w-6xl mx-auto text-center space-y-12">
       <div className="space-y-6">
         <div className="space-y-2">
           <h1 className="text-4xl md:text-5xl font-display font-bold text-primary">
@@ -174,7 +181,7 @@ export function SpreadSelection({ onSelect }: SpreadSelectionProps) {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-4 gap-6">
         {filteredOptions.map((opt) => (
           <button
             key={opt.id}

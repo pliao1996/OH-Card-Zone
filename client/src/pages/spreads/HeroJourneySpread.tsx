@@ -1,12 +1,23 @@
-import { CardDisplay } from "@/components/CardDisplay";
-import { cn } from "@/lib/utils";
+import { CardDisplay } from '@/components/CardDisplay';
+import { cn } from '@/lib/utils';
+import { Card } from '@shared/schema';
 
-import { useSpreadState } from "./useSpreadsState";
+import { useSpreadState } from './useSpreadsState';
 
-export function HeroJourneySpread() {
-  const { currentCards, revealed, toggleReveal } = useSpreadState({
+interface HeroJourneySpreadProps {
+  currentCards?: Card[];
+  revealed?: Record<number, boolean>;
+  toggleReveal?: (index: number) => void;
+}
+
+export function HeroJourneySpread(props?: HeroJourneySpreadProps) {
+  const hookState = useSpreadState({
     mode: "hero-journey",
   });
+
+  const currentCards = props?.currentCards ?? hookState.currentCards;
+  const revealed = props?.revealed ?? hookState.revealed;
+  const toggleReveal = props?.toggleReveal ?? hookState.toggleReveal;
 
   const labels = ["困境卡", "根源卡", "资源卡", "行动卡", "成长卡", "守护卡"];
   const journeyQuestions = [

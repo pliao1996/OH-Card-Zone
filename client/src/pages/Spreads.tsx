@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Layout } from '@/components/ui/Layout';
 
 import {
-    BalanceWheelSpread, HeroJourneyFullSpread, HeroJourneySpread, PairSpread,
+    BalanceWheelSpread, HeroJourneyFullSpread, HeroJourneySpread, HoOponoponoSpread, PairSpread,
     PastPresentFutureSpread, SingleCardSpread, SpreadSelection, StorySpread, useSpreadState
 } from './spreads/index';
 
@@ -23,27 +23,89 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
     hasData,
     isPending,
     setQuestionIndex,
+    toggleReveal,
+    currentCards,
+    data,
   } = useSpreadState({ mode });
 
   const getSpreadComponent = () => {
     switch (mode) {
       case "image":
       case "word":
-        return <SingleCardSpread mode={mode} />;
+        return (
+          <SingleCardSpread
+            mode={mode}
+            currentCards={currentCards}
+            revealed={revealed}
+            toggleReveal={toggleReveal}
+          />
+        );
       case "pair":
-        return <PairSpread />;
+        return (
+          <PairSpread
+            currentCards={currentCards}
+            revealed={revealed}
+            toggleReveal={toggleReveal}
+          />
+        );
       case "past-present-future":
-        return <PastPresentFutureSpread />;
+        return (
+          <PastPresentFutureSpread
+            currentCards={currentCards}
+            revealed={revealed}
+            toggleReveal={toggleReveal}
+          />
+        );
       case "story":
-        return <StorySpread />;
+        return (
+          <StorySpread
+            currentCards={currentCards}
+            revealed={revealed}
+            toggleReveal={toggleReveal}
+          />
+        );
       case "hero-journey":
-        return <HeroJourneySpread />;
+        return (
+          <HeroJourneySpread
+            currentCards={currentCards}
+            revealed={revealed}
+            toggleReveal={toggleReveal}
+          />
+        );
       case "hero-journey-full":
-        return <HeroJourneyFullSpread />;
+        return (
+          <HeroJourneyFullSpread
+            currentCards={currentCards}
+            revealed={revealed}
+            toggleReveal={toggleReveal}
+          />
+        );
       case "balance-wheel":
-        return <BalanceWheelSpread mode="balance-wheel" />;
+        return (
+          <BalanceWheelSpread
+            mode="balance-wheel"
+            currentCards={currentCards}
+            revealed={revealed}
+            toggleReveal={toggleReveal}
+          />
+        );
       case "balance-wheel-custom":
-        return <BalanceWheelSpread mode="balance-wheel-custom" />;
+        return (
+          <BalanceWheelSpread
+            mode="balance-wheel-custom"
+            currentCards={currentCards}
+            revealed={revealed}
+            toggleReveal={toggleReveal}
+          />
+        );
+      case "ho-oponopono":
+        return (
+          <HoOponoponoSpread
+            currentCards={currentCards}
+            revealed={revealed}
+            toggleReveal={toggleReveal}
+          />
+        );
       default:
         return null;
     }
@@ -65,6 +127,8 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
         return "生命平衡轮";
       case "balance-wheel-custom":
         return "平衡轮（自定义）";
+      case "ho-oponopono":
+        return "零极限牌阵";
       default:
         return `单张${mode === "image" ? "图卡" : "字卡"}牌阵`;
     }
@@ -72,6 +136,20 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
 
   const getSummaryQuestions = () => {
     switch (mode) {
+      case "image":
+        return [
+          "你看到了什么？",
+          "这个图像让你联想到生活中的什么场景？",
+          "这个图像最吸引你的部分是什么?",
+          "如果要增加一个元素来改变你的感受，你会加什么？为什么？",
+        ];
+      case "word":
+        return [
+          "你最想表达的什么？",
+          "这个词语在你生活中代表了什么？",
+          "这个词语触发了你怎样的情感反应？",
+          "如果要用一个图像来表现这个词语，你会选择什么样的图像？",
+        ];
       case "past-present-future":
         return [
           "从过去到未来的演变中，你看到了什么样的生命脉络？",
@@ -103,6 +181,12 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
           "图卡与字卡的碰撞，产生了一层怎样的意想不到的新含义？",
           "这个组合触动了你当下哪一个具体的决策或情感困惑？",
           "如果用一个词来概括这个组合带给你的启示，那会是什么？",
+        ];
+      case "ho-oponopono":
+        return [
+          "面对这四句疗愈之言，哪一句对你当下的生活最有触动？",
+          "在应用这四个步骤时，哪个环节对你来说最具挑战性？",
+          "如果用Ho'oponopono的智慧重新审视一段关系，会如何改变？",
         ];
       default:
         return [
@@ -155,6 +239,8 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
         revealed[8] &&
         revealed[9]
       );
+    } else if (mode === "ho-oponopono") {
+      return revealed[0] && revealed[1] && revealed[2] && revealed[3];
     }
     return revealed[0] === true;
   };

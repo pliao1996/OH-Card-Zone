@@ -1,12 +1,23 @@
-import { CardDisplay } from "@/components/CardDisplay";
-import { cn } from "@/lib/utils";
+import { CardDisplay } from '@/components/CardDisplay';
+import { cn } from '@/lib/utils';
+import { Card } from '@shared/schema';
 
-import { useSpreadState } from "./useSpreadsState";
+import { useSpreadState } from './useSpreadsState';
 
-export function StorySpread() {
-  const { currentCards, revealed, toggleReveal } = useSpreadState({
+interface StorySpreadProps {
+  currentCards?: Card[];
+  revealed?: Record<number, boolean>;
+  toggleReveal?: (index: number) => void;
+}
+
+export function StorySpread(props?: StorySpreadProps) {
+  const hookState = useSpreadState({
     mode: "story",
   });
+
+  const currentCards = props?.currentCards ?? hookState.currentCards;
+  const revealed = props?.revealed ?? hookState.revealed;
+  const toggleReveal = props?.toggleReveal ?? hookState.toggleReveal;
 
   const labels = ["一", "二", "三", "四", "五"];
   const cards = currentCards.slice(0, 5);

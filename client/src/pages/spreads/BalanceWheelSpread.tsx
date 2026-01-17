@@ -4,19 +4,30 @@ import {
 } from 'recharts';
 
 import { CardDisplay } from '@/components/CardDisplay';
+import { Card } from '@shared/schema';
 
 import { useSpreadState } from './useSpreadsState';
 
 interface BalanceWheelSpreadProps {
   mode?: "balance-wheel" | "balance-wheel-custom";
+  currentCards?: Card[];
+  revealed?: Record<number, boolean>;
+  toggleReveal?: (index: number) => void;
 }
 
 export function BalanceWheelSpread({
   mode = "balance-wheel",
+  currentCards: propCurrentCards,
+  revealed: propRevealed,
+  toggleReveal: propToggleReveal,
 }: BalanceWheelSpreadProps) {
-  const { currentCards, revealed, toggleReveal } = useSpreadState({
+  const hookState = useSpreadState({
     mode,
   });
+
+  const currentCards = propCurrentCards ?? hookState.currentCards;
+  const revealed = propRevealed ?? hookState.revealed;
+  const toggleReveal = propToggleReveal ?? hookState.toggleReveal;
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [scores, setScores] = useState<number[]>([0, 0, 0, 0, 0, 0]);

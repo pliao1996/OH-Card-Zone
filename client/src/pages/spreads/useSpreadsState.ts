@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { useDrawCards } from "@/hooks/use-cards";
-import { Card } from "@shared/schema";
+import { useDrawCards } from '@/hooks/use-cards';
+import { Card } from '@shared/schema';
 
 export interface UseSpreadStateProps {
   mode: string;
@@ -29,15 +29,6 @@ export function useSpreadState({
   const [questionIndex, setQuestionIndex] = useState(0);
   const [currentCards, setCurrentCards] = useState<Card[]>([]);
 
-  // Update currentCards only when data changes AND we are NOT in the middle of a flip-back
-  useState(() => {
-    if (data?.cards) {
-      if (Object.values(revealed).some((v) => v)) {
-        setCurrentCards(data.cards);
-      }
-    }
-  });
-
   // Synchronize currentCards when data arrives and cards are hidden
   useEffect(() => {
     if (data?.cards && Object.values(revealed).every((v) => !v)) {
@@ -56,6 +47,7 @@ export function useSpreadState({
       return 6;
     if (mode === "story") return 5;
     if (mode === "past-present-future") return 3;
+    if (mode === "ho-oponopono") return 4;
     return 1;
   };
 
@@ -63,7 +55,7 @@ export function useSpreadState({
   const hasData = currentCards.length >= cardCount;
 
   // Initial draw on mount
-  useState(() => {
+  useEffect(() => {
     if (mode === "past-present-future") {
       draw({ mode: "image", count: 3 } as any);
     } else if (mode === "story") {
@@ -74,12 +66,14 @@ export function useSpreadState({
       draw({ mode: "image", count: 10 } as any);
     } else if (mode === "balance-wheel" || mode === "balance-wheel-custom") {
       draw({ mode: "image", count: 6 } as any);
+    } else if (mode === "ho-oponopono") {
+      draw({ mode: "image", count: 4 } as any);
     } else if (mode === "pair") {
       draw({ mode: "pair" } as any);
     } else {
       draw({ mode: mode as any });
     }
-  });
+  }, [mode, draw]);
 
   const handleDrawAgain = () => {
     setRevealed({});
@@ -89,7 +83,8 @@ export function useSpreadState({
         mode === "story" ||
         mode.startsWith("hero-journey") ||
         mode === "balance-wheel" ||
-        mode === "balance-wheel-custom"
+        mode === "balance-wheel-custom" ||
+        mode === "ho-oponopono"
           ? "image"
           : mode;
 
@@ -97,14 +92,16 @@ export function useSpreadState({
         mode === "hero-journey-full"
           ? 10
           : mode === "hero-journey" ||
-            mode === "balance-wheel" ||
-            mode === "balance-wheel-custom"
-          ? 6
-          : mode === "story"
-          ? 5
-          : mode === "past-present-future"
-          ? 3
-          : 1;
+              mode === "balance-wheel" ||
+              mode === "balance-wheel-custom"
+            ? 6
+            : mode === "story"
+              ? 5
+              : mode === "past-present-future"
+                ? 3
+                : mode === "ho-oponopono"
+                  ? 4
+                  : 1;
 
       draw({ mode: drawMode as any, count });
     }, 400);

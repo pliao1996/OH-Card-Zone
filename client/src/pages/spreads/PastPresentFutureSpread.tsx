@@ -1,12 +1,23 @@
-import { CardDisplay } from "@/components/CardDisplay";
-import { cn } from "@/lib/utils";
+import { CardDisplay } from '@/components/CardDisplay';
+import { cn } from '@/lib/utils';
+import { Card } from '@shared/schema';
 
-import { useSpreadState } from "./useSpreadsState";
+import { useSpreadState } from './useSpreadsState';
 
-export function PastPresentFutureSpread() {
-  const { currentCards, revealed, toggleReveal } = useSpreadState({
+interface PastPresentFutureSpreadProps {
+  currentCards?: Card[];
+  revealed?: Record<number, boolean>;
+  toggleReveal?: (index: number) => void;
+}
+
+export function PastPresentFutureSpread(props?: PastPresentFutureSpreadProps) {
+  const hookState = useSpreadState({
     mode: "past-present-future",
   });
+
+  const currentCards = props?.currentCards ?? hookState.currentCards;
+  const revealed = props?.revealed ?? hookState.revealed;
+  const toggleReveal = props?.toggleReveal ?? hookState.toggleReveal;
 
   const labels = ["过去", "现在", "未来"];
   const cards = currentCards.slice(0, 3);
