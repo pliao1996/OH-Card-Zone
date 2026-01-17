@@ -1,13 +1,14 @@
-import { useState } from "react";
-import { Layout } from "@/components/ui/Layout";
-import { useCards } from "@/hooks/use-cards";
-import { CardDisplay } from "@/components/CardDisplay";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { type Card } from "@shared/schema";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Search } from 'lucide-react';
+import { useState } from 'react';
+
+import { CardDisplay } from '@/components/CardDisplay';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Layout } from '@/components/ui/Layout';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useCards } from '@/hooks/use-cards';
+import { Card } from '@shared/schema';
 
 export default function Gallery() {
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
@@ -19,9 +20,10 @@ export default function Gallery() {
   const filterCards = (cards: Card[] | undefined) => {
     if (!cards) return [];
     if (!searchTerm) return cards;
-    return cards.filter(c => 
-      c.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      c.content.toLowerCase().includes(searchTerm.toLowerCase())
+    return cards.filter(
+      (c) =>
+        c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.content.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
@@ -30,13 +32,15 @@ export default function Gallery() {
       <div className="space-y-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-display font-bold text-primary">卡片库</h1>
+            <h1 className="text-4xl font-display font-bold text-primary">
+              卡片库
+            </h1>
             <p className="text-muted-foreground mt-2">浏览完整的 OH 卡系列。</p>
           </div>
           <div className="relative w-full md:w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input 
-              placeholder="搜索卡片..." 
+            <Input
+              placeholder="搜索卡片..."
               className="pl-10 bg-white"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -46,65 +50,82 @@ export default function Gallery() {
 
         <Tabs defaultValue="image" className="w-full">
           <TabsList className="mb-8 p-1 bg-secondary/50 border border-border/50 rounded-xl">
-            <TabsTrigger value="image" className="rounded-lg px-8 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">图卡 ({imageCards?.length || 0})</TabsTrigger>
-            <TabsTrigger value="word" className="rounded-lg px-8 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">字卡 ({wordCards?.length || 0})</TabsTrigger>
+            <TabsTrigger
+              value="image"
+              className="rounded-lg px-8 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
+              图卡 ({imageCards?.length || 0})
+            </TabsTrigger>
+            <TabsTrigger
+              value="word"
+              className="rounded-lg px-8 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
+              字卡 ({wordCards?.length || 0})
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="image" className="mt-0">
-             {loadingImages ? (
-               <GallerySkeleton />
-             ) : (
-               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                 {filterCards(imageCards).map((card) => (
-                   <CardDisplay 
-                     key={card.id} 
-                     card={card} 
-                     className="w-full h-auto aspect-[3/4]"
-                     onClick={() => setSelectedCard(card)}
-                   />
-                 ))}
-                 {filterCards(imageCards).length === 0 && (
-                   <div className="col-span-full py-12 text-center text-muted-foreground">未找到图卡。</div>
-                 )}
-               </div>
-             )}
+            {loadingImages ? (
+              <GallerySkeleton />
+            ) : (
+              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-8 gap-2 md:gap-3">
+                {filterCards(imageCards).map((card) => (
+                  <CardDisplay
+                    key={card.id}
+                    card={card}
+                    className="w-full h-auto aspect-[3/4]"
+                    onClick={() => setSelectedCard(card)}
+                  />
+                ))}
+                {filterCards(imageCards).length === 0 && (
+                  <div className="col-span-full py-12 text-center text-muted-foreground">
+                    未找到图卡。
+                  </div>
+                )}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="word" className="mt-0">
             {loadingWords ? (
-               <GallerySkeleton />
-             ) : (
-               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                 {filterCards(wordCards).map((card) => (
-                   <CardDisplay 
-                     key={card.id} 
-                     card={card} 
-                     className="w-full h-auto aspect-[3/4]"
-                     onClick={() => setSelectedCard(card)}
-                   />
-                 ))}
-                 {filterCards(wordCards).length === 0 && (
-                   <div className="col-span-full py-12 text-center text-muted-foreground">未找到字卡。</div>
-                 )}
-               </div>
-             )}
+              <GallerySkeleton />
+            ) : (
+              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-8 gap-2 md:gap-3">
+                {filterCards(wordCards).map((card) => (
+                  <CardDisplay
+                    key={card.id}
+                    card={card}
+                    className="w-full h-auto aspect-[3/4]"
+                    onClick={() => setSelectedCard(card)}
+                  />
+                ))}
+                {filterCards(wordCards).length === 0 && (
+                  <div className="col-span-full py-12 text-center text-muted-foreground">
+                    未找到字卡。
+                  </div>
+                )}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
 
         {/* Detail Modal */}
-        <Dialog open={!!selectedCard} onOpenChange={(open) => !open && setSelectedCard(null)}>
-          <DialogContent className="max-w-4xl p-0 overflow-hidden bg-transparent border-none shadow-none flex items-center justify-center">
+        <Dialog
+          open={!!selectedCard}
+          onOpenChange={(open) => !open && setSelectedCard(null)}
+        >
+          <DialogContent className="max-w-5xl max-h-[90vh] w-auto p-4 bg-black/80 border-none shadow-lg flex items-center justify-center overflow-auto">
             {selectedCard && (
-               <div 
-                  className="relative cursor-pointer" 
-                  onClick={() => setSelectedCard(null)}
-               >
-                 <CardDisplay 
-                    card={selectedCard} 
-                    size="lg" 
-                    className="scale-125 md:scale-150 transition-transform" 
-                  />
-               </div>
+              <div
+                className="flex items-center justify-center cursor-pointer"
+                onClick={() => setSelectedCard(null)}
+              >
+                <CardDisplay
+                  card={selectedCard}
+                  size="lg"
+                  className="cursor-pointer"
+                />
+              </div>
             )}
           </DialogContent>
         </Dialog>
@@ -115,8 +136,8 @@ export default function Gallery() {
 
 function GallerySkeleton() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-      {Array.from({ length: 10 }).map((_, i) => (
+    <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-8 gap-2 md:gap-3">
+      {Array.from({ length: 16 }).map((_, i) => (
         <Skeleton key={i} className="w-full aspect-[3/4] rounded-xl" />
       ))}
     </div>

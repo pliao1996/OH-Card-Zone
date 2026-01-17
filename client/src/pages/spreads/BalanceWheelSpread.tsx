@@ -99,13 +99,22 @@ export function BalanceWheelSpread({
                 dot={(props: any) => {
                   const { cx, cy, index } = props;
                   if (!scoredIndices.has(index)) return <g key={index} />;
+
+                  const score = scores[index];
+                  let dotColor = "hsl(0, 100%, 50%)"; // 默认红色 (< 5)
+                  if (score >= 7) {
+                    dotColor = "hsl(120, 100%, 40%)"; // 绿色 (>= 7)
+                  } else if (score >= 5) {
+                    dotColor = "hsl(45, 100%, 50%)"; // 黄色 (5-6)
+                  }
+
                   return (
                     <circle
                       key={index}
                       cx={cx}
                       cy={cy}
                       r={6}
-                      fill="hsl(var(--primary))"
+                      fill={dotColor}
                       style={{ cursor: "pointer", pointerEvents: "all" }}
                     />
                   );
@@ -120,11 +129,23 @@ export function BalanceWheelSpread({
         <div className="relative w-full h-full z-10 pointer-events-none">
           {currentCards.slice(0, 6).map((card, idx) => {
             const angle = (idx * 60 - 90) * (Math.PI / 180);
-            const radius = 45;
-            const x = 50 + radius * Math.cos(angle);
-            const y = 50 + radius * Math.sin(angle);
+            // 增加水平半径，减少纵向半径避免上下遮挡
+            const horizontalRadius = 55;
+            const verticalRadius = 42;
 
-            const labelRadius = 25;
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+
+            // 对于上下位置（索引0和3）使用较小的纵向半径，其他使用水平半径
+            const radius =
+              Math.abs(sin) > 0.7 ? verticalRadius : horizontalRadius;
+
+            const x = 50 + radius * cos;
+            const y = 50 + radius * sin;
+
+            // 标签显示在雷达图最外圈，轴线顶端
+            // 雷达图 outerRadius="40%"，所以标签半径设为 40
+            const labelRadius = Math.abs(sin) > 0.7 ? 22 : 25;
             const labelX = 50 + labelRadius * Math.cos(angle);
             const labelY = 50 + labelRadius * Math.sin(angle);
 
@@ -172,7 +193,7 @@ export function BalanceWheelSpread({
                     >
                       {labels[idx] ||
                         (mode === "balance-wheel-custom"
-                          ? `关键词${idx + 1}`
+                          ? `关键词`
                           : defaultLabels[idx])}
                     </span>
                   )}

@@ -1,5 +1,5 @@
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
 
 import type { Card } from "@shared/schema";
 
@@ -79,11 +79,19 @@ export class FileStorage implements IStorage {
 
   private getRandomCards(cards: Card[], count: number): Card[] {
     if (cards.length === 0) return [];
+
+    // 确保不会重复抽取同一张牌
+    const availableCards = [...cards];
     const result: Card[] = [];
-    for (let i = 0; i < count; i++) {
-      const randomCard = this.getRandomCard(cards);
-      if (randomCard) result.push(randomCard);
+
+    for (let i = 0; i < count && availableCards.length > 0; i++) {
+      const randomIndex = Math.floor(Math.random() * availableCards.length);
+      const randomCard = availableCards[randomIndex];
+      result.push(randomCard);
+      // 移除已抽取的卡牌
+      availableCards.splice(randomIndex, 1);
     }
+
     return result;
   }
 

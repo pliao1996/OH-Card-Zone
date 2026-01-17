@@ -1,21 +1,14 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, Loader2, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowLeft, Loader2, RotateCcw } from 'lucide-react';
+import { useState } from 'react';
 
-import { Button } from "@/components/ui/button";
-import { Layout } from "@/components/ui/Layout";
+import { Button } from '@/components/ui/button';
+import { Layout } from '@/components/ui/Layout';
 
 import {
-  BalanceWheelSpread,
-  HeroJourneyFullSpread,
-  HeroJourneySpread,
-  PairSpread,
-  PastPresentFutureSpread,
-  SingleCardSpread,
-  SpreadSelection,
-  StorySpread,
-  useSpreadState,
-} from "./spreads/index";
+    BalanceWheelSpread, HeroJourneyFullSpread, HeroJourneySpread, PairSpread,
+    PastPresentFutureSpread, SingleCardSpread, SpreadSelection, StorySpread, useSpreadState
+} from './spreads/index';
 
 interface ActiveSpreadProps {
   mode: string;
@@ -163,7 +156,7 @@ function ActiveSpread({ mode, onBack }: ActiveSpreadProps) {
         revealed[9]
       );
     }
-    return revealed[0];
+    return revealed[0] === true;
   };
 
   const allRevealed = getAllRevealed();
